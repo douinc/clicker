@@ -2,19 +2,25 @@ import SwiftUI
 
 // MARK: - Mac App Entry Point
 @main
-struct PresentationRemoteMacApp: App {
+struct ClickerMacApp: App {
     @StateObject private var connectionManager = MacConnectionManager()
     @StateObject private var appState = AppState()
-    
+
     var body: some Scene {
         // Menu Bar App
         MenuBarExtra {
             MenuBarView(connectionManager: connectionManager, appState: appState)
         } label: {
-            Image(systemName: appState.isConnected ? "iphone.radiowaves.left.and.right" : "iphone")
+            if let nsImage = NSImage(named: "MenuBarIcon") {
+                Image(nsImage: nsImage)
+                    .renderingMode(.template)
+            } else {
+                // Fallback to SF Symbol if custom icon not found
+                Image(systemName: appState.isConnected ? "cursorarrow.click.2" : "cursorarrow.click")
+            }
         }
-        
-        // Optional: Settings Window
+
+        // Settings Window
         Settings {
             SettingsView()
         }
@@ -30,7 +36,7 @@ class AppState: ObservableObject {
 struct MenuBarView: View {
     @ObservedObject var connectionManager: MacConnectionManager
     @ObservedObject var appState: AppState
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Status Header
@@ -42,15 +48,15 @@ struct MenuBarView: View {
                     .font(.headline)
             }
             .padding(.bottom, 4)
-            
+
             Divider()
-            
+
             // Connected Devices
             if !connectionManager.connectedDevices.isEmpty {
-                Text("Connected Devices:")
+                Text("Connected:")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                
+
                 ForEach(connectionManager.connectedDevices, id: \.displayName) { peer in
                     HStack {
                         Image(systemName: "iphone")
@@ -58,23 +64,23 @@ struct MenuBarView: View {
                     }
                     .padding(.leading, 8)
                 }
-                
+
                 Divider()
             }
-            
-            // Last Command (for debugging)
+
+            // Last Command
             if let lastCommand = connectionManager.lastCommand {
                 HStack {
-                    Text("Last command:")
+                    Text("Last:")
                         .foregroundColor(.secondary)
                     Text(lastCommand.rawValue)
                         .fontWeight(.medium)
                 }
                 .font(.caption)
-                
+
                 Divider()
             }
-            
+
             // Controls
             if connectionManager.isAdvertising {
                 Button("Stop Listening") {
@@ -85,17 +91,17 @@ struct MenuBarView: View {
                     checkPermissionsAndStart()
                 }
             }
-            
+
             Divider()
-            
-            // Accessibility Permission Status
+
+            // Accessibility Status
             HStack {
-                Image(systemName: KeystrokeSender.shared.hasAccessibilityPermission ? 
+                Image(systemName: KeystrokeSender.shared.hasAccessibilityPermission ?
                       "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                     .foregroundColor(KeystrokeSender.shared.hasAccessibilityPermission ? .green : .orange)
                 Text("Accessibility")
                     .font(.caption)
-                
+
                 if !KeystrokeSender.shared.hasAccessibilityPermission {
                     Button("Grant") {
                         KeystrokeSender.shared.requestAccessibilityPermission()
@@ -103,14 +109,14 @@ struct MenuBarView: View {
                     .font(.caption)
                 }
             }
-            
+
             Divider()
-            
-            // Test Buttons (for debugging)
-            Text("Test Controls:")
+
+            // Test Controls
+            Text("Test:")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             HStack {
                 Button("← Prev") {
                     KeystrokeSender.shared.previousSlide()
@@ -119,16 +125,16 @@ struct MenuBarView: View {
                     KeystrokeSender.shared.nextSlide()
                 }
             }
-            
+
             Divider()
-            
+
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
             .keyboardShortcut("q")
         }
         .padding()
-        .frame(width: 250)
+        .frame(width: 220)
         .onAppear {
             setupCommandHandler()
         }
@@ -136,7 +142,7 @@ struct MenuBarView: View {
             appState.isConnected = !devices.isEmpty
         }
     }
-    
+
     private var statusColor: Color {
         if !connectionManager.connectedDevices.isEmpty {
             return .green
@@ -146,14 +152,14 @@ struct MenuBarView: View {
             return .gray
         }
     }
-    
+
     private func checkPermissionsAndStart() {
         if !KeystrokeSender.shared.hasAccessibilityPermission {
             KeystrokeSender.shared.requestAccessibilityPermission()
         }
         connectionManager.startAdvertising()
     }
-    
+
     private func setupCommandHandler() {
         connectionManager.onCommandReceived = { command in
             KeystrokeSender.shared.sendCommand(command)
@@ -166,12 +172,12 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section("About") {
-                Text("Presentation Remote")
+                Text("Clicker")
                     .font(.headline)
-                Text("Control your presentations from your iPhone")
+                Text("Control presentations from your iPhone")
                     .foregroundColor(.secondary)
             }
-            
+
             Section("Permissions") {
                 HStack {
                     Text("Accessibility Permission")
@@ -188,6 +194,6 @@ struct SettingsView: View {
             }
         }
         .padding()
-        .frame(width: 350, height: 200)
+        .frame(width: 320, height: 180)
     }
 }

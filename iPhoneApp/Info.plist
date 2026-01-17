@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PPT Remote</string>
+	<string>Clicker</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -20,18 +20,16 @@
 	<string>1</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_ppt-remote._tcp</string>
-		<string>_ppt-remote._udp</string>
+		<string>_clicker._tcp</string>
+		<string>_clicker._udp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>PPT Remote needs local network access to find and connect to your Mac for presentation control.</string>
+	<string>Clicker needs local network access to find and connect to your Mac.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>

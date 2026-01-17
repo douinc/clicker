@@ -1,11 +1,11 @@
-name: PresentationRemote
+name: Clicker
 
 options:
   bundleIdPrefix: com.dou
   deploymentTarget:
-    macOS: "13.0"
-    iOS: "17.0"
-  xcodeVersion: "15.0"
+    macOS: "14.0"
+    iOS: "18.0"
+  xcodeVersion: "16.0"
   generateEmptyDirectories: true
 
 settings:
@@ -17,7 +17,7 @@ targets:
   # ─────────────────────────────────────────────────────────────
   # Mac Menu Bar App
   # ─────────────────────────────────────────────────────────────
-  PresentationRemoteMac:
+  ClickerMac:
     type: application
     platform: macOS
     sources:
@@ -29,27 +29,29 @@ targets:
     info:
       path: MacApp/Info.plist
       properties:
-        CFBundleName: Presentation Remote
+        CFBundleName: Clicker
         LSUIElement: true
         NSBonjourServices:
-          - _ppt-remote._tcp
-          - _ppt-remote._udp
-        NSLocalNetworkUsageDescription: "Presentation Remote needs local network access to connect with your iPhone for presentation control."
-        NSAppleEventsUsageDescription: "Presentation Remote needs to send keystrokes to control your presentation software."
+          - _clicker._tcp
+          - _clicker._udp
+        NSLocalNetworkUsageDescription: "Clicker needs local network access to connect with your iPhone for presentation control."
+        NSAppleEventsUsageDescription: "Clicker needs to send keystrokes to control your presentation software."
     entitlements:
-      path: MacApp/PresentationRemoteMac.entitlements
+      path: MacApp/ClickerMac.entitlements
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.dou.presentation-remote-mac
-        PRODUCT_NAME: Presentation Remote
-        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-mac
+        PRODUCT_NAME: Clicker
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
         CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_ENTITLEMENTS: MacApp/PresentationRemoteMac.entitlements
+        CODE_SIGN_ENTITLEMENTS: MacApp/ClickerMac.entitlements
+        DEVELOPMENT_TEAM: HD35YQ72U4
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   # ─────────────────────────────────────────────────────────────
   # iPhone App
   # ─────────────────────────────────────────────────────────────
-  PresentationRemoteiOS:
+  ClickeriOS:
     type: application
     platform: iOS
     sources:
@@ -60,40 +62,39 @@ targets:
     info:
       path: iPhoneApp/Info.plist
       properties:
-        CFBundleName: PPT Remote
+        CFBundleName: Clicker
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
         NSBonjourServices:
-          - _ppt-remote._tcp
-          - _ppt-remote._udp
-        NSLocalNetworkUsageDescription: "PPT Remote needs local network access to find and connect to your Mac for presentation control."
+          - _clicker._tcp
+          - _clicker._udp
+        NSLocalNetworkUsageDescription: "Clicker needs local network access to find and connect to your Mac."
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.dou.presentation-remote-ios
-        PRODUCT_NAME: PPT Remote
-        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
+        PRODUCT_NAME: Clicker
+        IPHONEOS_DEPLOYMENT_TARGET: "18.0"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
         TARGETED_DEVICE_FAMILY: "1"  # iPhone only
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
 schemes:
-  PresentationRemoteMac:
+  ClickerMac:
     build:
       targets:
-        PresentationRemoteMac: all
+        ClickerMac: all
     run:
       config: Debug
     archive:
       config: Release
 
-  PresentationRemoteiOS:
+  ClickeriOS:
     build:
       targets:
-        PresentationRemoteiOS: all
+        ClickeriOS: all
     run:
       config: Debug
     archive:

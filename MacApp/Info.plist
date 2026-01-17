@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Presentation Remote</string>
+	<string>Clicker</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -21,13 +21,13 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Presentation Remote needs to send keystrokes to control your presentation software.</string>
+	<string>Clicker needs to send keystrokes to control your presentation software.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_ppt-remote._tcp</string>
-		<string>_ppt-remote._udp</string>
+		<string>_clicker._tcp</string>
+		<string>_clicker._udp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Presentation Remote needs local network access to connect with your iPhone for presentation control.</string>
+	<string>Clicker needs local network access to connect with your iPhone for presentation control.</string>
 </dict>
 </plist>

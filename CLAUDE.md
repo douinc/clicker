@@ -1,10 +1,10 @@
-# Claude Code Instructions for Presentation Remote
+# Claude Code Instructions for Clicker
 
 ## Project Overview
 
 This is a SwiftUI-based presentation remote system with two apps:
 - **Mac App**: Menu bar app that receives commands and sends keystrokes to presentation software
-- **iPhone App**: Remote control with slide navigation and presentation timer
+- **iPhone App**: Remote control with vertical slide navigation and presentation timer
 
 ## Tech Stack
 
@@ -12,7 +12,8 @@ This is a SwiftUI-based presentation remote system with two apps:
 - **UI Framework**: SwiftUI
 - **Networking**: MultipeerConnectivity framework
 - **Build System**: XcodeGen + xcodebuild (CLI-based, no Xcode GUI required)
-- **Platforms**: macOS 13.0+, iOS 17.0+
+- **Platforms**: macOS 14.0+, iOS 18.0+
+- **Design**: Apple liquid glass aesthetic (dark mode, translucent materials)
 
 ## Project Structure
 
@@ -26,13 +27,13 @@ presentation-remote/
 │   ├── MacConnectionManager.swift       # Multipeer session handling
 │   ├── KeystrokeSender.swift           # CGEvent keystroke injection
 │   ├── Info.plist                       # Base plist (merged by XcodeGen)
-│   └── PresentationRemoteMac.entitlements
+│   └── ClickerMac.entitlements
 ├── iPhoneApp/           # iOS remote control app
 │   ├── PresentationRemoteiPhoneApp.swift  # Main app + all views
 │   ├── iPhoneConnectionManager.swift      # Multipeer session handling
 │   ├── PresentationTimer.swift           # Timer with haptic feedback
 │   └── Info.plist                        # Base plist (merged by XcodeGen)
-└── PresentationRemote.xcodeproj/        # Generated - do not edit directly
+└── Clicker.xcodeproj/                    # Generated - do not edit directly
 ```
 
 ## Build Commands
@@ -42,22 +43,22 @@ presentation-remote/
 xcodegen generate
 
 # Build Mac app
-xcodebuild -scheme PresentationRemoteMac build
+xcodebuild -scheme ClickerMac build
 
 # Build iOS app (simulator)
-xcodebuild -scheme PresentationRemoteiOS -destination 'generic/platform=iOS Simulator' build
+xcodebuild -scheme ClickeriOS -destination 'generic/platform=iOS Simulator' build
 
 # Build iOS app (physical device)
-xcodebuild -scheme PresentationRemoteiOS -destination 'id=DEVICE_ID' build
+xcodebuild -scheme ClickeriOS -destination 'id=DEVICE_ID' build
 
 # Install on iPhone
-xcrun devicectl device install app --device DEVICE_ID ~/Library/Developer/Xcode/DerivedData/PresentationRemote-*/Build/Products/Debug-iphoneos/PPT\ Remote.app
+xcrun devicectl device install app --device DEVICE_ID ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug-iphoneos/Clicker.app
 
 # Launch on iPhone
-xcrun devicectl device process launch --device DEVICE_ID com.dou.presentation-remote-ios
+xcrun devicectl device process launch --device DEVICE_ID com.dou.clicker-ios
 
 # Run Mac app
-open ~/Library/Developer/Xcode/DerivedData/PresentationRemote-*/Build/Products/Debug/Presentation\ Remote.app
+open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug/Clicker.app
 ```
 
 ## Key Architecture Decisions
@@ -68,7 +69,7 @@ open ~/Library/Developer/Xcode/DerivedData/PresentationRemote-*/Build/Products/D
 - This is critical for Multipeer Connectivity which requires `NSBonjourServices` and `NSLocalNetworkUsageDescription`
 
 ### Multipeer Connectivity
-- Service type: `_ppt-remote._tcp` and `_ppt-remote._udp`
+- Service type: `_clicker._tcp` and `_clicker._udp`
 - Mac acts as advertiser, iPhone acts as browser
 - Commands are sent as JSON-encoded `RemoteCommand` enum values
 
@@ -78,9 +79,11 @@ open ~/Library/Developer/Xcode/DerivedData/PresentationRemote-*/Build/Products/D
 - Uses `CGEvent` API to send keyboard events to frontmost app
 
 ### iPhone App Specifics
-- Requires iOS 17+ for `symbolEffect(.pulse)` API
+- Vertical button layout: Previous (chevron up) at top, Next (chevron down) at bottom
+- Liquid glass aesthetic using `.ultraThinMaterial` for frosted glass effect
+- Dark mode only (`.preferredColorScheme(.dark)`) for stage visibility
 - Timer uses `UIImpactFeedbackGenerator` for haptic feedback
-- Section with both header and footer must use explicit `header:` and `footer:` labels
+- Uses modern SwiftUI with `presentationDetents` for sheet sizing
 
 ## Common Issues & Solutions
 
@@ -108,8 +111,8 @@ NOT: `Section("Header") { ... } footer: { ... }`
 
 ## Bundle Identifiers
 
-- Mac: `com.dou.presentation-remote-mac`
-- iOS: `com.dou.presentation-remote-ios`
+- Mac: `com.dou.clicker-mac`
+- iOS: `com.dou.clicker-ios`
 
 ## Development Team
 
@@ -120,19 +123,19 @@ Team ID: `HD35YQ72U4` (DOU Inc.)
 1. Edit Swift source files directly
 2. If changing build settings, targets, or Info.plist keys, edit `project.yml`
 3. After editing `project.yml`, always run `xcodegen generate`
-4. Do NOT edit `PresentationRemote.xcodeproj` directly - it's generated
+4. Do NOT edit `Clicker.xcodeproj` directly - it's generated
 
 ## Useful Debugging Commands
 
 ```bash
 # Check built Info.plist contents
-find ~/Library/Developer/Xcode/DerivedData/PresentationRemote-*/Build/Products -name "Info.plist" -exec plutil -p {} \;
+find ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products -name "Info.plist" -exec plutil -p {} \;
 
 # List available schemes
-xcodebuild -project PresentationRemote.xcodeproj -list
+xcodebuild -project Clicker.xcodeproj -list
 
 # Show build destinations
-xcodebuild -scheme PresentationRemoteiOS -showdestinations
+xcodebuild -scheme ClickeriOS -showdestinations
 
 # Find Team ID
 security find-identity -v -p codesigning

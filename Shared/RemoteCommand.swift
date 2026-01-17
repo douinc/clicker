@@ -21,6 +21,6 @@ enum RemoteCommand: String, Codable {
 
 // MARK: - Service Configuration
 struct RemoteServiceConfig {
-    static let serviceType = "ppt-remote"  // Must be 1-15 chars, lowercase, no spaces
-    static let displayName = "Presentation Remote"
+    static let serviceType = "clicker"  // Must be 1-15 chars, lowercase, no spaces
+    static let displayName = "Clicker"
 }
