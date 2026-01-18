@@ -98,22 +98,6 @@ struct ConnectionView: View {
 
             Spacer()
 
-            // Search Button
-            if !connectionManager.isSearching {
-                Button {
-                    connectionManager.startBrowsing()
-                } label: {
-                    Text("Search for Mac")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
-                }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 24)
-            }
-
             // Instructions
             VStack(spacing: 4) {
                 Text("Ensure the Mac app is running")

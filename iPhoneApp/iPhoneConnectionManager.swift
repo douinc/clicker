@@ -26,6 +26,7 @@ class iPhoneConnectionManager: NSObject, ObservableObject {
         super.init()
         setupSession()
         feedbackGenerator.prepare()
+        startBrowsing()
     }
     
     private func setupSession() {
@@ -71,6 +72,7 @@ class iPhoneConnectionManager: NSObject, ObservableObject {
         connectedMac = nil
         isConnected = false
         statusMessage = "Disconnected"
+        startBrowsing()
     }
     
     // MARK: - Send Commands
