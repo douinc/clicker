@@ -94,7 +94,7 @@ xcodebuild -scheme ClickeriOS \
 For physical device:
 ```bash
 # Find your device ID
-xcrun devicectl list devices
+xcrun xctrace list devices
 
 # Build for device
 xcodebuild -scheme ClickeriOS -destination 'id=YOUR_DEVICE_ID' build
