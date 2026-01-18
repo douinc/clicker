@@ -85,9 +85,15 @@ extension MacConnectionManager: MCSessionDelegate {
             case .notConnected:
                 print("❌ Disconnected from: \(peerID.displayName)")
                 self.connectedDevices.removeAll { $0 == peerID }
-                self.statusMessage = self.connectedDevices.isEmpty ? 
-                    "Waiting for iPhone to connect..." : 
-                    "Connected to \(self.connectedDevices.count) device(s)"
+                if self.connectedDevices.isEmpty {
+                    self.statusMessage = "Waiting for iPhone to reconnect..."
+                    // Ensure we're still advertising for reconnection
+                    if self.advertiser == nil {
+                        self.startAdvertising()
+                    }
+                } else {
+                    self.statusMessage = "Connected to \(self.connectedDevices.count) device(s)"
+                }
                 
             @unknown default:
                 break

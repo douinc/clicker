@@ -24,13 +24,19 @@ class KeystrokeSender {
     
     // MARK: - Send Keystroke
     func sendCommand(_ command: RemoteCommand) {
+        // Skip keepalive commands - no keystroke needed
+        guard let keyCode = command.keyCode else {
+            print("💓 Received keepalive (no keystroke)")
+            return
+        }
+
         guard hasAccessibilityPermission else {
             print("⚠️ No accessibility permission! Requesting...")
             requestAccessibilityPermission()
             return
         }
-        
-        sendKeyPress(keyCode: command.keyCode)
+
+        sendKeyPress(keyCode: keyCode)
         print("⌨️ Sent keystroke for: \(command.rawValue)")
     }
     
