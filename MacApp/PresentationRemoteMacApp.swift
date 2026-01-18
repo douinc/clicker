@@ -88,6 +88,17 @@ struct MenuBarView: View {
 
             Divider()
 
+            Button("Restart") {
+                let url = Bundle.main.bundleURL
+                let configuration = NSWorkspace.OpenConfiguration()
+                configuration.createsNewApplicationInstance = true
+                NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, _ in
+                    DispatchQueue.main.async {
+                        NSApplication.shared.terminate(nil)
+                    }
+                }
+            }.keyboardShortcut("r")
+
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
