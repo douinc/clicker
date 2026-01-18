@@ -38,131 +38,67 @@ struct MenuBarView: View {
     @ObservedObject var appState: AppState
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Status Header
-            HStack {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
-                Text(connectionManager.statusMessage)
-                    .font(.headline)
+        Group {
+            Text(connectionManager.statusMessage)
+
+            if !connectionManager.connectedDevices.isEmpty {
+                ForEach(connectionManager.connectedDevices, id: \.displayName) { peer in
+                    Label(peer.displayName, systemImage: "iphone")
+                }
             }
-            .padding(.bottom, 4)
+
+            if let lastCommand = connectionManager.lastCommand {
+                Text("Last: \(lastCommand.rawValue)")
+            }
 
             Divider()
 
-            // Connected Devices
-            if !connectionManager.connectedDevices.isEmpty {
-                Text("Connected:")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                ForEach(connectionManager.connectedDevices, id: \.displayName) { peer in
-                    HStack {
-                        Image(systemName: "iphone")
-                        Text(peer.displayName)
-                    }
-                    .padding(.leading, 8)
-                }
-
-                Divider()
-            }
-
-            // Last Command
-            if let lastCommand = connectionManager.lastCommand {
-                HStack {
-                    Text("Last:")
-                        .foregroundColor(.secondary)
-                    Text(lastCommand.rawValue)
-                        .fontWeight(.medium)
-                }
-                .font(.caption)
-
-                Divider()
-            }
-
-            // Controls
             if connectionManager.isAdvertising {
                 Button("Stop Listening") {
                     connectionManager.stopAdvertising()
                 }
             } else {
                 Button("Start Listening") {
-                    checkPermissionsAndStart()
-                }
-            }
-
-            Divider()
-
-            // Accessibility Status
-            HStack {
-                Image(systemName: KeystrokeSender.shared.hasAccessibilityPermission ?
-                      "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                    .foregroundColor(KeystrokeSender.shared.hasAccessibilityPermission ? .green : .orange)
-                Text("Accessibility")
-                    .font(.caption)
-
-                if !KeystrokeSender.shared.hasAccessibilityPermission {
-                    Button("Grant") {
+                    if !KeystrokeSender.shared.hasAccessibilityPermission {
                         KeystrokeSender.shared.requestAccessibilityPermission()
                     }
-                    .font(.caption)
+                    connectionManager.startAdvertising()
                 }
             }
 
             Divider()
 
-            // Test Controls
-            Text("Test:")
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            HStack {
-                Button("← Prev") {
-                    KeystrokeSender.shared.previousSlide()
-                }
-                Button("Next →") {
-                    KeystrokeSender.shared.nextSlide()
+            if KeystrokeSender.shared.hasAccessibilityPermission {
+                Label("Accessibility OK", systemImage: "checkmark.circle")
+            } else {
+                Button("Grant Accessibility") {
+                    KeystrokeSender.shared.requestAccessibilityPermission()
                 }
             }
+
+            Divider()
+
+            Button("Test Previous") {
+                KeystrokeSender.shared.previousSlide()
+            }.keyboardShortcut("[")
+
+            Button("Test Next") {
+                KeystrokeSender.shared.nextSlide()
+            }.keyboardShortcut("]")
 
             Divider()
 
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
-            }
-            .keyboardShortcut("q")
+            }.keyboardShortcut("q")
         }
-        .padding()
-        .frame(width: 220)
         .onAppear {
-            setupCommandHandler()
+            connectionManager.onCommandReceived = { command in
+                KeystrokeSender.shared.sendCommand(command)
+            }
         }
         .onChange(of: connectionManager.connectedDevices) { devices in
             appState.isConnected = !devices.isEmpty
-        }
-    }
-
-    private var statusColor: Color {
-        if !connectionManager.connectedDevices.isEmpty {
-            return .green
-        } else if connectionManager.isAdvertising {
-            return .orange
-        } else {
-            return .gray
-        }
-    }
-
-    private func checkPermissionsAndStart() {
-        if !KeystrokeSender.shared.hasAccessibilityPermission {
-            KeystrokeSender.shared.requestAccessibilityPermission()
-        }
-        connectionManager.startAdvertising()
-    }
-
-    private func setupCommandHandler() {
-        connectionManager.onCommandReceived = { command in
-            KeystrokeSender.shared.sendCommand(command)
         }
     }
 }
