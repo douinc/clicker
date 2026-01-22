@@ -9,14 +9,18 @@
 /* Begin PBXBuildFile section */
 		3B5B1976029E96F1DAC73714 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E892F528E1E6138EA22D02BF /* Assets.xcassets */; };
 		47215779765AF2AED56305A0 /* RemoteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5558556F73BD9D0E4CC00 /* RemoteCommand.swift */; };
+		5A3160CC9FF75E3A124573B5 /* SubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0755ADB94F64C4573E4472 /* SubscriptionStatus.swift */; };
 		6607F2F360BB1A401D0923EC /* iPhoneConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0536DC76CB56D17D38CE4967 /* iPhoneConnectionManager.swift */; };
 		708773B36987594A56DB6BCA /* PresentationRemoteiPhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9273CC1857345E5A39F66E70 /* PresentationRemoteiPhoneApp.swift */; };
 		81B6CFB949406AD25A7D3F27 /* KeystrokeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62DDB26AE1C5B0B805603A4 /* KeystrokeSender.swift */; };
+		9EC735EED3C5D1F9A5785CB1 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D622639AAE664798131DBE8 /* SubscriptionManager.swift */; };
 		9F0BDD5FF61D75E8EF516B1D /* PresentationRemoteMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF51B3E0128389B70FDB8C2 /* PresentationRemoteMacApp.swift */; };
 		A231896F9556614CDA55DA88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29A317F5BD53B10BAFB24A18 /* Assets.xcassets */; };
+		B7440A8D7607A01AEE7B8C2C /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8441DEAF646603BD39313A /* PaywallView.swift */; };
 		DA8D7CB6F683BB3186215F63 /* PresentationTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13C37854B2C28052D02654E /* PresentationTimer.swift */; };
 		EE58FC6753DBB5B13C18F9A9 /* MacConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEF57C347E0C25B203339B /* MacConnectionManager.swift */; };
 		F07DE7217F3053732713ACEE /* RemoteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5558556F73BD9D0E4CC00 /* RemoteCommand.swift */; };
+		F92EF6511FAA8AC06BC791A0 /* TrialTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DC8F6FB52F930E306F39C /* TrialTracker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,11 +28,15 @@
 		13B706B9645E7BBBE3822D74 /* ClickeriOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClickeriOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FCEF57C347E0C25B203339B /* MacConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacConnectionManager.swift; sourceTree = "<group>"; };
 		29A317F5BD53B10BAFB24A18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2C8441DEAF646603BD39313A /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		4D141D33DB4614EA15B3C3A7 /* ClickerMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClickerMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		545DC8F6FB52F930E306F39C /* TrialTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialTracker.swift; sourceTree = "<group>"; };
 		7FF51B3E0128389B70FDB8C2 /* PresentationRemoteMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationRemoteMacApp.swift; sourceTree = "<group>"; };
 		9273CC1857345E5A39F66E70 /* PresentationRemoteiPhoneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationRemoteiPhoneApp.swift; sourceTree = "<group>"; };
+		9D622639AAE664798131DBE8 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		A7F5558556F73BD9D0E4CC00 /* RemoteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteCommand.swift; sourceTree = "<group>"; };
 		C62DDB26AE1C5B0B805603A4 /* KeystrokeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystrokeSender.swift; sourceTree = "<group>"; };
+		CE0755ADB94F64C4573E4472 /* SubscriptionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionStatus.swift; sourceTree = "<group>"; };
 		E892F528E1E6138EA22D02BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F13C37854B2C28052D02654E /* PresentationTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationTimer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,8 +85,12 @@
 			children = (
 				E892F528E1E6138EA22D02BF /* Assets.xcassets */,
 				0536DC76CB56D17D38CE4967 /* iPhoneConnectionManager.swift */,
+				2C8441DEAF646603BD39313A /* PaywallView.swift */,
 				9273CC1857345E5A39F66E70 /* PresentationRemoteiPhoneApp.swift */,
 				F13C37854B2C28052D02654E /* PresentationTimer.swift */,
+				9D622639AAE664798131DBE8 /* SubscriptionManager.swift */,
+				CE0755ADB94F64C4573E4472 /* SubscriptionStatus.swift */,
+				545DC8F6FB52F930E306F39C /* TrialTracker.swift */,
 			);
 			path = iPhoneApp;
 			sourceTree = "<group>";
@@ -185,9 +197,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7440A8D7607A01AEE7B8C2C /* PaywallView.swift in Sources */,
 				708773B36987594A56DB6BCA /* PresentationRemoteiPhoneApp.swift in Sources */,
 				DA8D7CB6F683BB3186215F63 /* PresentationTimer.swift in Sources */,
 				47215779765AF2AED56305A0 /* RemoteCommand.swift in Sources */,
+				9EC735EED3C5D1F9A5785CB1 /* SubscriptionManager.swift in Sources */,
+				5A3160CC9FF75E3A124573B5 /* SubscriptionStatus.swift in Sources */,
+				F92EF6511FAA8AC06BC791A0 /* TrialTracker.swift in Sources */,
 				6607F2F360BB1A401D0923EC /* iPhoneConnectionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

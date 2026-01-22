@@ -5,12 +5,86 @@ import SwiftUI
 struct ClickerApp: App {
     @StateObject private var connectionManager = iPhoneConnectionManager()
     @StateObject private var presentationTimer = PresentationTimer()
+    @State private var subscriptionManager = SubscriptionManager()
 
     var body: some Scene {
         WindowGroup {
-            ContentView(connectionManager: connectionManager, timer: presentationTimer)
+            SubscriptionGateView(connectionManager: connectionManager, timer: presentationTimer)
+                .environment(subscriptionManager)
                 .preferredColorScheme(.dark)
         }
+    }
+}
+
+// MARK: - Subscription Gate View
+/// Gates the app behind subscription/trial status
+struct SubscriptionGateView: View {
+    @Environment(SubscriptionManager.self) private var subscriptionManager
+    @ObservedObject var connectionManager: iPhoneConnectionManager
+    @ObservedObject var timer: PresentationTimer
+    @State private var showPaywall = false
+
+    var body: some View {
+        Group {
+            switch subscriptionManager.status {
+            case .notDetermined:
+                // Loading state
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black)
+
+            case .trial, .subscribed:
+                // Full access
+                ContentView(connectionManager: connectionManager, timer: timer)
+                    .overlay(alignment: .top) {
+                        if let days = subscriptionManager.trialDaysRemaining {
+                            TrialBannerView(daysRemaining: days) {
+                                showPaywall = true
+                            }
+                        }
+                    }
+
+            case .expired:
+                // Paywall
+                PaywallView()
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
+    }
+}
+
+// MARK: - Trial Banner View
+/// Shows remaining trial days with upgrade prompt
+struct TrialBannerView: View {
+    let daysRemaining: Int
+    let onUpgrade: () -> Void
+
+    var body: some View {
+        HStack {
+            Image(systemName: "clock.fill")
+                .foregroundStyle(.orange)
+
+            Text("Trial: \(daysRemaining) day\(daysRemaining == 1 ? "" : "s") left")
+                .font(.subheadline.weight(.medium))
+
+            Spacer()
+
+            Button("Upgrade") {
+                onUpgrade()
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(.orange, in: Capsule())
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 }
 

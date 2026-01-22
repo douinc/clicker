@@ -223,29 +223,29 @@ classDiagram
 ## Acceptance Criteria
 
 ### iOS App Functional Requirements
-- [ ] New users automatically start 7-day trial on first launch
-- [ ] Trial status shows days remaining (e.g., "Trial: 5 days left")
-- [ ] Paywall appears when trial expires
-- [ ] Users can purchase $4.99/year subscription
-- [ ] Subscription unlocks full app functionality
-- [ ] Restore purchase works for existing subscribers
-- [ ] Subscription renews automatically each year
-- [ ] Works offline with 7-day cached entitlement
+- [x] New users automatically start 7-day trial on first launch
+- [x] Trial status shows days remaining (e.g., "Trial: 5 days left")
+- [x] Paywall appears when trial expires
+- [x] Users can purchase $4.99/year subscription
+- [x] Subscription unlocks full app functionality
+- [x] Restore purchase works for existing subscribers
+- [x] Subscription renews automatically each year
+- [x] Works offline with 7-day cached entitlement
 
 ### Mac App Distribution Requirements
-- [ ] GitHub Actions builds and signs Mac app on tag push
-- [ ] DMG artifact uploaded to GitHub releases
-- [ ] App notarized for Gatekeeper compliance
-- [ ] Homebrew cask formula installable via `brew install --cask`
+- [x] GitHub Actions builds and signs Mac app on tag push
+- [x] DMG artifact uploaded to GitHub releases
+- [x] App notarized for Gatekeeper compliance
+- [x] Homebrew cask formula installable via `brew install --cask`
 - [ ] README includes installation instructions
 
 ### Non-Functional Requirements
-- [ ] Purchase flow completes in <3 seconds on good network
-- [ ] Subscription status cached for offline use (7 days)
-- [ ] Trial tracking persists through app deletion (Keychain)
+- [x] Purchase flow completes in <3 seconds on good network
+- [x] Subscription status cached for offline use (7 days)
+- [x] Trial tracking persists through app deletion (Keychain)
 
 ### Quality Gates
-- [ ] All subscription states tested via StoreKit config
+- [x] All subscription states tested via StoreKit config
 - [ ] iOS paywall tested on device and simulator
 - [ ] Mac app installs correctly from GitHub release
 - [ ] Sandbox purchase flow verified
@@ -553,6 +553,7 @@ struct FeatureRow: View {
 ## Success Metrics
 
 ### iOS Subscription Metrics
+
 | Metric | Target |
 |--------|--------|
 | Trial-to-paid conversion | >10% |
@@ -561,6 +562,7 @@ struct FeatureRow: View {
 | Purchase error rate | <5% |
 
 ### Mac Distribution Metrics
+
 | Metric | Target |
 |--------|--------|
 | GitHub release download count | Track monthly |

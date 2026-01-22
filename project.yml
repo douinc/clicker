@@ -58,7 +58,10 @@ targets:
       - path: iPhoneApp
         excludes:
           - "*.plist"
+          - "*.storekit"
       - path: Shared
+    capabilities:
+      In-App Purchase: {}
     info:
       path: iPhoneApp/Info.plist
       properties:
@@ -97,5 +100,6 @@ schemes:
         ClickeriOS: all
     run:
       config: Debug
+      storeKitConfiguration: iPhoneApp/Products.storekit
     archive:
       config: Release
