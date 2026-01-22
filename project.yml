@@ -32,8 +32,8 @@ targets:
         CFBundleName: ClickerRemoteReceiver
         LSUIElement: true
         NSBonjourServices:
-          - _clicker._tcp
-          - _clicker._udp
+          - _clickerremote._tcp
+          - _clickerremote._udp
         NSLocalNetworkUsageDescription: "Clicker needs local network access to connect with your iPhone for presentation control."
         NSAppleEventsUsageDescription: "Clicker needs to send keystrokes to control your presentation software."
     entitlements:
@@ -70,8 +70,8 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSBonjourServices:
-          - _clicker._tcp
-          - _clicker._udp
+          - _clickerremote._tcp
+          - _clickerremote._udp
         NSLocalNetworkUsageDescription: "Clicker needs local network access to find and connect to your Mac."
     settings:
       base:

@@ -24,8 +24,8 @@
 	<string>Clicker needs to send keystrokes to control your presentation software.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_clicker._tcp</string>
-		<string>_clicker._udp</string>
+		<string>_clickerremote._tcp</string>
+		<string>_clickerremote._udp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Clicker needs local network access to connect with your iPhone for presentation control.</string>
