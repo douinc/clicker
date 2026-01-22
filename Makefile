@@ -2,8 +2,8 @@
 -include .env
 export
 
-# Derived paths
-DERIVED_DATA = ~/Library/Developer/Xcode/DerivedData/Clicker-*
+# Find the most recently modified DerivedData folder
+DERIVED_DATA = $(shell ls -td ~/Library/Developer/Xcode/DerivedData/Clicker-* 2>/dev/null | head -1)
 MAC_APP = $(DERIVED_DATA)/Build/Products/Debug/Clicker.app
 IOS_APP = $(DERIVED_DATA)/Build/Products/Debug-iphoneos/Clicker.app
 
@@ -19,11 +19,11 @@ build-mac: ## Build Mac menu bar app
 	xcodebuild -scheme ClickerMac build
 
 build-ios: ## Build iOS app for physical device
-	@if [ -z "$(MY_DEVICE_ID)" ]; then \
-		echo "Error: MY_DEVICE_ID not set. Create .env file with MY_DEVICE_ID=your-device-id"; \
+	@if [ -z "$(XCODE_DEVICE_ID)" ]; then \
+		echo "Error: XCODE_DEVICE_ID not set. Create .env file with XCODE_DEVICE_ID=your-udid"; \
 		exit 1; \
 	fi
-	xcodebuild -scheme ClickeriOS -destination 'id=$(MY_DEVICE_ID)' build
+	xcodebuild -scheme ClickeriOS -destination 'id=$(XCODE_DEVICE_ID)' build
 
 build-sim: ## Build iOS app for simulator
 	xcodebuild -scheme ClickeriOS -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' build
@@ -34,10 +34,14 @@ run-mac: build-mac ## Build and run Mac app
 	open $(MAC_APP)
 
 install-ios: build-ios ## Build and install iOS app on device
-	xcrun devicectl device install app --device $(MY_DEVICE_ID) $(IOS_APP)
+	@if [ -z "$(DEVICECTL_ID)" ]; then \
+		echo "Error: DEVICECTL_ID not set. Run 'xcrun devicectl list devices' to find your device UUID"; \
+		exit 1; \
+	fi
+	xcrun devicectl device install app --device $(DEVICECTL_ID) $(IOS_APP)
 
 run-ios: install-ios ## Build, install, and launch iOS app on device
-	xcrun devicectl device process launch --device $(MY_DEVICE_ID) com.dou.clicker-ios
+	xcrun devicectl device process launch --device $(DEVICECTL_ID) com.dou.clicker-ios
 
 clean: ## Clean build artifacts
 	xcodebuild -scheme ClickerMac clean
