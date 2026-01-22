@@ -9,3 +9,5 @@ site/
 .venv/
 __pycache__/
 plans/feat-subscription-trial-monetization.md
+public/.DS_Store
+.DS_Store
