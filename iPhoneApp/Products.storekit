@@ -66,8 +66,8 @@
       "id" : "premium_group",
       "localizations" : [
         {
-          "description" : "Full access to Clicker presentation remote features",
-          "displayName" : "Clicker Premium",
+          "description" : "Full access to ClickerRemote presentation remote features",
+          "displayName" : "ClickerRemote Pro",
           "locale" : "en_US"
         }
       ],

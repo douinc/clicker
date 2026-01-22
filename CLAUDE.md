@@ -49,16 +49,38 @@ xcodebuild -scheme ClickerMac build
 xcodebuild -scheme ClickeriOS -destination 'generic/platform=iOS Simulator' build
 
 # Build iOS app (physical device)
-xcodebuild -scheme ClickeriOS -destination 'id=DEVICE_ID' build
+xcodebuild -scheme ClickeriOS -destination 'id=XCODE_DEVICE_ID' build
 
 # Install on iPhone
-xcrun devicectl device install app --device DEVICE_ID ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug-iphoneos/Clicker.app
+xcrun devicectl device install app --device XCODE_DEVICE_ID ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug-iphoneos/ClickerRemote.app
 
 # Launch on iPhone
-xcrun devicectl device process launch --device DEVICE_ID com.dou.clicker-ios
+xcrun devicectl device process launch --device DEVICECTL_ID com.dou.clicker-ios
 
 # Run Mac app
-open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug/Clicker.app
+open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug/ClickerRemoteReceiver.app
+```
+
+## Distribution
+
+### iOS App (App Store)
+The iOS app is distributed via the App Store. Use the following commands:
+```bash
+make release-ios    # Archive and upload to App Store Connect
+```
+Then go to App Store Connect to select the build for TestFlight/review.
+
+### Mac App (GitHub DMG)
+The Mac app is distributed as a DMG via GitHub Releases (not the Mac App Store).
+```bash
+make dmg            # Create DMG with custom icon
+make release-mac    # Create DMG and show GitHub release instructions
+```
+The DMG is created at `./build/ClickerRemoteReceiver-{version}.dmg` with the app logo as the volume icon.
+
+To create a GitHub release:
+```bash
+gh release create v1.0 ./build/ClickerRemoteReceiver-1.0.dmg --title 'Clicker v1.0' --notes 'Release notes'
 ```
 
 ## Key Architecture Decisions
@@ -74,11 +96,13 @@ open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Debug/Clicke
 - Commands are sent as JSON-encoded `RemoteCommand` enum values
 
 ### Mac App Specifics
+- App name: `ClickerRemoteReceiver` (distributed via GitHub DMG)
 - `LSUIElement: true` makes it a menu bar app (no Dock icon)
 - Requires Accessibility permission for CGEvent keystroke injection
 - Uses `CGEvent` API to send keyboard events to frontmost app
 
 ### iPhone App Specifics
+- App name: `ClickerRemote` (distributed via App Store)
 - Vertical button layout: Previous (chevron up) at top, Next (chevron down) at bottom
 - Liquid glass aesthetic using `.ultraThinMaterial` for frosted glass effect
 - Dark mode only (`.preferredColorScheme(.dark)`) for stage visibility
@@ -111,8 +135,8 @@ NOT: `Section("Header") { ... } footer: { ... }`
 
 ## Bundle Identifiers
 
-- Mac: `com.dou.clicker-mac`
-- iOS: `com.dou.clicker-ios`
+- Mac (ClickerRemoteReceiver): `com.dou.clicker-mac`
+- iOS (ClickerRemote): `com.dou.clicker-ios`
 
 ## Development Team
 
@@ -124,6 +148,21 @@ Team ID: `HD35YQ72U4` (DOU Inc.)
 2. If changing build settings, targets, or Info.plist keys, edit `project.yml`
 3. After editing `project.yml`, always run `xcodegen generate`
 4. Do NOT edit `Clicker.xcodeproj` directly - it's generated
+
+## Makefile Commands
+
+```bash
+make help           # Show all available commands
+make generate       # Generate Xcode project from project.yml
+make build-mac      # Build Mac app (debug)
+make build-ios      # Build iOS app for device
+make build-sim      # Build iOS app for simulator
+make run-mac        # Build and run Mac app
+make run-ios        # Build, install, and launch on device
+make dmg            # Create DMG for Mac distribution
+make release-mac    # Create DMG with GitHub release instructions
+make release-ios    # Archive and upload iOS to App Store Connect
+```
 
 ## Useful Debugging Commands
 

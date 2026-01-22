@@ -5,7 +5,7 @@ import Foundation
 let subscriptionProductID = "com.dou.clicker_ios.subscription.yearly"
 
 /// Subscription group ID for StoreKit configuration
-let subscriptionGroupID = "premium_group"
+let subscriptionGroupID = "21901349"
 
 /// Manages subscription state, purchases, and trial tracking using StoreKit 2
 @MainActor

@@ -4,7 +4,7 @@ import Security
 /// Tracks the 7-day trial period using Keychain storage (survives app deletion)
 final class TrialTracker {
     private let trialDuration: TimeInterval = 7 * 24 * 60 * 60 // 7 days
-    private let keychainKey = "com.dou.clicker.trialStartDate"
+    private let keychainKey = "com.dou.clicker-ios.trialStartDate"
 
     var trialStartDate: Date? {
         get { readFromKeychain() }

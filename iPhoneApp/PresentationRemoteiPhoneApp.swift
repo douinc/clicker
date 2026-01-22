@@ -133,7 +133,7 @@ struct ConnectionView: View {
                         .symbolEffect(.pulse, isActive: connectionManager.isSearching)
                 }
 
-                Text("Clicker")
+                Text("ClickerRemote")
                     .font(.system(size: 32, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
 

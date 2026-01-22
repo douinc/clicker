@@ -29,7 +29,7 @@ targets:
     info:
       path: MacApp/Info.plist
       properties:
-        CFBundleName: Clicker
+        CFBundleName: ClickerRemoteReceiver
         LSUIElement: true
         NSBonjourServices:
           - _clicker._tcp
@@ -41,7 +41,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-mac
-        PRODUCT_NAME: Clicker
+        PRODUCT_NAME: ClickerRemoteReceiver
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: MacApp/ClickerMac.entitlements
@@ -65,7 +65,7 @@ targets:
     info:
       path: iPhoneApp/Info.plist
       properties:
-        CFBundleName: Clicker
+        CFBundleName: ClickerRemote
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -76,7 +76,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
-        PRODUCT_NAME: Clicker
+        PRODUCT_NAME: ClickerRemote
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4

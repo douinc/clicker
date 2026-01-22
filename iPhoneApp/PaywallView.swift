@@ -13,7 +13,7 @@ struct PaywallView: View {
                     .font(.system(size: 60))
                     .foregroundStyle(.blue)
 
-                Text("Clicker Premium")
+                Text("ClickerRemote Pro")
                     .font(.largeTitle.bold())
 
                 Text("Control your presentations with ease")

@@ -119,7 +119,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section("About") {
-                Text("Clicker")
+                Text("ClickerRemoteReceiver")
                     .font(.headline)
                 Text("Control presentations from your iPhone")
                     .foregroundColor(.secondary)
