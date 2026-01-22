@@ -10,7 +10,8 @@ IOS_SIM_APP = $(DERIVED_DATA)/Build/Products/Debug-iphonesimulator/ClickerRemote
 
 .PHONY: help generate build-mac build-ios build-all run-mac install-ios run-ios clean list-devices screenshot \
        archive-ios upload-ios release-ios archive-mac dmg release-mac \
-       build-mac-release verify-signing sign-dmg notarize verify-notarization check-signing setup-notary notary-log
+       build-mac-release verify-signing sign-dmg notarize verify-notarization check-signing setup-notary notary-log \
+       brew-sha256 brew-update-cask brew-publish
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -221,3 +222,47 @@ setup-notary: ## Store notarization credentials in keychain (interactive)
 notary-log: ## Show the log from the last notarization submission
 	@echo "📋 Recent notarization submissions:"
 	xcrun notarytool history --keychain-profile $(NOTARY_PROFILE)
+
+# ============================================================================
+# Homebrew Distribution
+# ============================================================================
+
+HOMEBREW_TAP_REPO = git@github.com:douinc/homebrew-tap.git
+CASK_FILE = Casks/clicker-remote-receiver.rb
+
+brew-sha256: ## Calculate SHA256 of the DMG for Homebrew cask
+	@if [ ! -f ./build/$(DMG_NAME)-$(VERSION).dmg ]; then \
+		echo "❌ DMG not found. Run 'make release-mac' first."; \
+		exit 1; \
+	fi
+	@echo "SHA256 for Homebrew cask:"
+	@shasum -a 256 ./build/$(DMG_NAME)-$(VERSION).dmg | awk '{print $$1}'
+
+brew-update-cask: ## Update cask file with current version and SHA256
+	@if [ ! -f ./build/$(DMG_NAME)-$(VERSION).dmg ]; then \
+		echo "❌ DMG not found. Run 'make release-mac' first."; \
+		exit 1; \
+	fi
+	@SHA=$$(shasum -a 256 ./build/$(DMG_NAME)-$(VERSION).dmg | awk '{print $$1}'); \
+	echo "📝 Updating cask with version $(VERSION) and SHA256: $$SHA"; \
+	sed -i '' "s/version \".*\"/version \"$(VERSION)\"/" $(CASK_FILE); \
+	sed -i '' "s/sha256 .*/sha256 \"$$SHA\"/" $(CASK_FILE); \
+	echo "✅ Cask updated: $(CASK_FILE)"
+
+brew-publish: brew-update-cask ## Publish cask to homebrew-tap repository
+	@echo "📤 Publishing to homebrew-tap..."
+	@if [ ! -d ../homebrew-tap ]; then \
+		echo "Cloning homebrew-tap..."; \
+		git clone $(HOMEBREW_TAP_REPO) ../homebrew-tap; \
+	fi
+	@mkdir -p ../homebrew-tap/Casks
+	@cp $(CASK_FILE) ../homebrew-tap/Casks/
+	@cd ../homebrew-tap && \
+		git add Casks/clicker-remote-receiver.rb && \
+		git commit -m "Update clicker-remote-receiver to $(VERSION)" && \
+		git push
+	@echo "✅ Published to homebrew-tap!"
+	@echo ""
+	@echo "Users can now install with:"
+	@echo "  brew tap douinc/tap"
+	@echo "  brew install --cask clicker-remote-receiver"

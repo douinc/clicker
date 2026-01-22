@@ -1,20 +1,33 @@
-# Clicker
+# ClickerRemote / ClickerRemoteReceiver
 
-> Control your presentations from your iPhone — no dongles, no internet required.
+> Control your presentations from your iPhone — no dongles, no bs.
 
 ![Platform](https://img.shields.io/badge/platform-macOS%2014%2B%20%7C%20iOS%2018%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Clicker is a presentation remote that turns your iPhone into a wireless clicker for your Mac. It uses peer-to-peer networking — no cloud servers, no account required, works offline.
+ClickerRemote/ClickerRemoteReceiver is a fully open-source presentation remote/receiver that turns your iPhone into a wireless clicker for your Mac. It uses peer-to-peer networking — no cloud servers, no account required, no bs.
+
+You must install the ClickerRemoteReceiver in your Mac in order to properly use the ClickerRemote iOS app. Think of the ClickerRemoteReceiver as a wireless USB dongle and the ClickerRemote as a hardware clicker. Both are required to make it work.
+
+## Why I Made This
+
+Carrying around a $30 ~ $100 clicker in addition to a $1000 iPhone and $2000 Mac seems excessive.
+
+For a presentation or product demo, I usually connect my device to an HDMI interface. I use Google Slides, Figma Slides, Powerpoint, Keynote depending on the subject.
+
+Inspired by the iPhone or Apple Watch native functionality to control Keynote presentation in Mac, I wanted to bring this to other tools as well.
+
+
+## At A Glance
 
 ```mermaid
 graph LR
     subgraph iPhone
-        A[Clicker App]
+        A[ClickerRemote App]
     end
     subgraph Mac
-        B[Menu Bar App]
+        B[ClickerRemoteReceiver Menu Bar App]
     end
     subgraph Presentation
         C[Keynote / PowerPoint / Google Slides]
@@ -35,11 +48,18 @@ graph LR
 
 ## Installation
 
-### Mac App (Free & Open Source)
+### Mac App (ClickerRemoteReceiver)
 
 **Option 1: Download Release**
 
 Download the latest `.dmg` from [Releases](https://github.com/douinc/clicker/releases), drag `Clicker.app` to Applications, and grant Accessibility permission when prompted.
+
+You can also download the Mac App via `brew`.
+
+```bash
+brew tap douinc/tap                                                                                                                                                                                                                        
+brew install --cask clicker-remote-receiver
+```
 
 **Option 2: Build from Source**
 
@@ -57,12 +77,12 @@ xcodebuild -scheme ClickerMac -configuration Release build
 open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Release/Clicker.app
 ```
 
-### iPhone App
+### iPhone App (ClickerRemote)
 
 Download from the [App Store](https://apps.apple.com/app/clicker) *(coming soon)*
 
 - 7-day free trial included
-- $4.99/year subscription
+- $19.99/year subscription
 
 ## Usage
 
