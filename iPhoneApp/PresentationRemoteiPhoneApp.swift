@@ -115,6 +115,7 @@ struct ContentView: View {
 // MARK: - Connection View
 struct ConnectionView: View {
     @ObservedObject var connectionManager: iPhoneConnectionManager
+    @State private var isHelpExpanded = false
 
     var body: some View {
         VStack(spacing: 32) {
@@ -172,15 +173,101 @@ struct ConnectionView: View {
 
             Spacer()
 
-            // Instructions
-            VStack(spacing: 4) {
-                Text("Ensure the Mac app is running")
-                Text("Both devices on the same network")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .padding(.bottom, 32)
+            // Help / Setup Section
+            HelpSetupSection(isExpanded: $isHelpExpanded)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
         }
+    }
+}
+
+// MARK: - Help Setup Section
+struct HelpSetupSection: View {
+    @Binding var isExpanded: Bool
+
+    // Safe force-unwrap: hardcoded compile-time constant URL
+    private let gitHubReleasesURL = URL(string: "https://github.com/douinc/clicker/releases")!
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header (always visible, tappable)
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "info.circle")
+                        .font(.body.weight(.medium))
+                        .foregroundStyle(.secondary)
+
+                    Text("Need help setting up?")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .buttonStyle(.plain)
+
+            // Expanded content
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 16) {
+                    Divider()
+                        .background(.white.opacity(0.1))
+
+                    Text("1. Download and install ClickerRemoteReceiver Mac Menubar App from the official link.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("2. Grant Accessibility for ClickerRemoteReceiver and restart it. Then press 'Start Listening'.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("3. Connect iPhone and Mac to the same network and your Mac will automatically appear in ClickerRemote iOS app. Hotspot also works.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("You can find detailed instructions and more help from the official repository.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // Share button
+                    ShareLink(item: gitHubReleasesURL) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.subheadline.weight(.medium))
+                            Text("Share Download Link")
+                                .font(.subheadline.weight(.medium))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+                .transition(.opacity)
+            }
+        }
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(.white.opacity(0.1), lineWidth: 1)
+        )
     }
 }
 
