@@ -9,7 +9,8 @@ IOS_APP = $(DERIVED_DATA)/Build/Products/Debug-iphoneos/ClickerRemote.app
 IOS_SIM_APP = $(DERIVED_DATA)/Build/Products/Debug-iphonesimulator/ClickerRemote.app
 
 .PHONY: help generate build-mac build-ios build-all run-mac install-ios run-ios clean list-devices screenshot \
-       archive-ios upload-ios release-ios archive-mac dmg release-mac
+       archive-ios upload-ios release-ios archive-mac dmg release-mac \
+       build-mac-release verify-signing sign-dmg notarize verify-notarization check-signing setup-notary notary-log
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -45,9 +46,14 @@ install-ios: build-ios ## Build and install iOS app on device
 run-ios: install-ios ## Build, install, and launch iOS app on device
 	xcrun devicectl device process launch --device $(DEVICECTL_ID) com.dou.clicker-ios
 
-clean: ## Clean build artifacts
+clean: ## Clean build artifacts and unmount/remove installed app
 	xcodebuild -scheme ClickerMac clean
 	xcodebuild -scheme ClickeriOS clean
+	@echo "🧹 Cleaning up mounted volumes and installed app (requires sudo)..."
+	-sudo umount -f /Volumes/ClickerRemoteReceiver 2>/dev/null || true
+	-sudo rm -rf /Volumes/ClickerRemoteReceiver 2>/dev/null || true
+	-sudo rm -rf /Applications/ClickerRemoteReceiver.app 2>/dev/null || true
+	@echo "✅ Clean complete"
 
 list-devices: ## List connected iOS devices
 	xcrun xctrace list devices
@@ -80,15 +86,17 @@ upload-ios: ## Export and upload iOS app to App Store Connect
 release-ios: archive-ios upload-ios ## Archive and upload iOS app to App Store Connect
 
 # ============================================================================
-# Mac App GitHub Distribution (DMG)
+# Mac App GitHub Distribution (Signed + Notarized DMG)
 # ============================================================================
 
 RELEASE_MAC_APP = $(DERIVED_DATA)/Build/Products/Release/ClickerRemoteReceiver.app
 DMG_NAME = ClickerRemoteReceiver
 MAC_LOGO = public/logo/mac-logo.png
 VERSION = $(shell /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" MacApp/Info.plist 2>/dev/null || echo "1.0.0")
+NOTARY_PROFILE = notarytool-profile
+SIGNING_IDENTITY = "Developer ID Application: DOU Inc. (HD35YQ72U4)"
 
-build-mac-release: ## Build Mac app in Release configuration
+build-mac-release: ## Build Mac app in Release configuration (with Developer ID signing)
 	xcodebuild -scheme ClickerMac -configuration Release build
 
 archive-mac: ## Archive Mac app for distribution
@@ -96,11 +104,23 @@ archive-mac: ## Archive Mac app for distribution
 		-scheme ClickerMac \
 		-archivePath ./build/ClickerMac.xcarchive
 
-dmg: build-mac-release ## Create DMG for Mac app distribution
+verify-signing: build-mac-release ## Verify app is signed correctly for distribution
+	@echo "🔍 Verifying code signature..."
+	codesign --verify --deep --strict --verbose=2 $(RELEASE_MAC_APP)
+	@echo ""
+	@echo "🔍 Checking signing identity..."
+	codesign -dvv $(RELEASE_MAC_APP) 2>&1 | grep "Authority"
+	@echo ""
+	@echo "🔍 Checking Hardened Runtime..."
+	codesign -dvv $(RELEASE_MAC_APP) 2>&1 | grep -E "(flags|runtime)"
+	@echo ""
+	@echo "✅ Signature verification complete"
+
+dmg: build-mac-release ## Create DMG for Mac app distribution (unsigned)
 	@mkdir -p ./build
 	@rm -f ./build/$(DMG_NAME)-$(VERSION).dmg
 	@echo "Creating DMG with custom icon..."
-	@# Create iconset from PNG (convert to PNG format explicitly)
+	@# Create iconset from PNG
 	@rm -rf ./build/dmg-icon.iconset
 	@mkdir -p ./build/dmg-icon.iconset
 	@sips -s format png -z 16 16     $(MAC_LOGO) --out ./build/dmg-icon.iconset/icon_16x16.png
@@ -138,11 +158,66 @@ dmg: build-mac-release ## Create DMG for Mac app distribution
 	@rm -rf ./build/dmg-temp ./build/dmg-icon.iconset ./build/dmg-icon.icns ./build/$(DMG_NAME)-rw.dmg
 	@echo "✅ DMG created: ./build/$(DMG_NAME)-$(VERSION).dmg"
 
-release-mac: dmg ## Create DMG and show instructions for GitHub release
+sign-dmg: dmg ## Sign the DMG with Developer ID
+	@echo "🔏 Signing DMG..."
+	codesign --force --sign $(SIGNING_IDENTITY) ./build/$(DMG_NAME)-$(VERSION).dmg
+	@echo "✅ DMG signed"
+
+notarize: sign-dmg ## Submit DMG for notarization and wait for result
+	@echo "📤 Submitting for notarization..."
+	xcrun notarytool submit ./build/$(DMG_NAME)-$(VERSION).dmg \
+		--keychain-profile $(NOTARY_PROFILE) \
+		--wait
+	@echo ""
+	@echo "📎 Stapling notarization ticket..."
+	xcrun stapler staple ./build/$(DMG_NAME)-$(VERSION).dmg
+	@echo ""
+	@echo "✅ Notarization complete!"
+
+verify-notarization: ## Verify the DMG is properly notarized
+	@echo "🔍 Verifying notarization..."
+	spctl --assess --type open --context context:primary-signature --verbose=2 ./build/$(DMG_NAME)-$(VERSION).dmg
+	@echo ""
+	xcrun stapler validate ./build/$(DMG_NAME)-$(VERSION).dmg
+	@echo "✅ Notarization verified"
+
+release-mac: notarize ## Build, sign, notarize DMG and show GitHub release instructions
 	@echo ""
 	@echo "📦 Mac DMG ready for GitHub release!"
+	@echo "   File: ./build/$(DMG_NAME)-$(VERSION).dmg"
 	@echo ""
 	@echo "To create a GitHub release:"
-	@echo "  1. gh release create v$(VERSION) ./build/$(DMG_NAME)-$(VERSION).dmg --title 'Clicker v$(VERSION)' --notes 'Release notes here'"
+	@echo "  gh release create v$(VERSION) ./build/$(DMG_NAME)-$(VERSION).dmg \\"
+	@echo "    --title 'Clicker v$(VERSION)' \\"
+	@echo "    --notes 'Release notes here'"
 	@echo ""
-	@echo "Or manually upload at: https://github.com/YOUR_USERNAME/clicker/releases/new"
+
+# ============================================================================
+# Notarization Setup Helpers
+# ============================================================================
+
+check-signing: ## Check if Developer ID certificate is installed
+	@echo "🔍 Looking for Developer ID Application certificate..."
+	@security find-identity -v -p codesigning | grep "Developer ID Application" || \
+		(echo "❌ No Developer ID Application certificate found!" && \
+		 echo "" && \
+		 echo "To create one:" && \
+		 echo "  1. Go to https://developer.apple.com/account/resources/certificates/list" && \
+		 echo "  2. Click + and select 'Developer ID Application'" && \
+		 echo "  3. Follow the prompts to create and download" && \
+		 echo "  4. Double-click the .cer file to install" && \
+		 exit 1)
+	@echo "✅ Developer ID certificate found"
+
+setup-notary: ## Store notarization credentials in keychain (interactive)
+	@echo "📝 Setting up notarization credentials..."
+	@echo "You'll need:"
+	@echo "  - Your Apple ID email"
+	@echo "  - Team ID: HD35YQ72U4"
+	@echo "  - An app-specific password from https://appleid.apple.com"
+	@echo ""
+	xcrun notarytool store-credentials $(NOTARY_PROFILE) --team-id HD35YQ72U4
+
+notary-log: ## Show the log from the last notarization submission
+	@echo "📋 Recent notarization submissions:"
+	xcrun notarytool history --keychain-profile $(NOTARY_PROFILE)

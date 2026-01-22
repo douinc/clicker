@@ -70,15 +70,40 @@ make release-ios    # Archive and upload to App Store Connect
 ```
 Then go to App Store Connect to select the build for TestFlight/review.
 
-### Mac App (GitHub DMG)
-The Mac app is distributed as a DMG via GitHub Releases (not the Mac App Store).
-```bash
-make dmg            # Create DMG with custom icon
-make release-mac    # Create DMG and show GitHub release instructions
-```
-The DMG is created at `./build/ClickerRemoteReceiver-{version}.dmg` with the app logo as the volume icon.
+### Mac App (GitHub DMG - Signed & Notarized)
+The Mac app is distributed as a signed and notarized DMG via GitHub Releases.
 
-To create a GitHub release:
+**One-time setup:**
+1. Create a Developer ID Application certificate at [Apple Developer Portal](https://developer.apple.com/account/resources/certificates/list)
+2. Create an app-specific password at [appleid.apple.com](https://appleid.apple.com)
+3. Run `make setup-notary` to store credentials in keychain
+
+**Release workflow:**
+```bash
+make check-signing      # Verify Developer ID certificate is installed
+make release-mac        # Build, sign, notarize, and create DMG
+```
+
+This runs through the full pipeline:
+1. Build Release configuration with Hardened Runtime
+2. Create DMG with custom icon
+3. Sign DMG with Developer ID
+4. Submit to Apple for notarization
+5. Staple notarization ticket to DMG
+
+The notarized DMG is created at `./build/ClickerRemoteReceiver-{version}.dmg`.
+
+**Individual commands:**
+```bash
+make dmg                  # Create unsigned DMG
+make sign-dmg             # Sign DMG with Developer ID
+make notarize             # Submit for notarization and staple
+make verify-signing       # Verify app signature
+make verify-notarization  # Verify DMG is notarized
+make notary-log           # Show recent notarization submissions
+```
+
+**Create GitHub release:**
 ```bash
 gh release create v1.0 ./build/ClickerRemoteReceiver-1.0.dmg --title 'Clicker v1.0' --notes 'Release notes'
 ```
@@ -110,6 +135,23 @@ gh release create v1.0 ./build/ClickerRemoteReceiver-1.0.dmg --title 'Clicker v1
 - Uses modern SwiftUI with `presentationDetents` for sheet sizing
 
 ## Common Issues & Solutions
+
+### Notarization fails with "Invalid" status
+Check the notarization log with `xcrun notarytool log <submission-id> --keychain-profile notarytool-profile`. Common causes:
+
+1. **Wrong certificate**: Using "Apple Distribution" instead of "Developer ID Application"
+2. **Missing timestamp**: Signature needs `--timestamp` flag
+3. **Debug entitlement**: `com.apple.security.get-task-allow` is forbidden
+
+The fix requires these Release-only settings in `project.yml`:
+```yaml
+configs:
+  Release:
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "Developer ID Application"
+    CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+    OTHER_CODE_SIGN_FLAGS: "--timestamp"
+```
 
 ### "Signing requires development team"
 Add `DEVELOPMENT_TEAM: YOUR_TEAM_ID` to `project.yml` under the target's settings, then run `xcodegen generate`.
@@ -152,16 +194,24 @@ Team ID: `HD35YQ72U4` (DOU Inc.)
 ## Makefile Commands
 
 ```bash
-make help           # Show all available commands
-make generate       # Generate Xcode project from project.yml
-make build-mac      # Build Mac app (debug)
-make build-ios      # Build iOS app for device
-make build-sim      # Build iOS app for simulator
-make run-mac        # Build and run Mac app
-make run-ios        # Build, install, and launch on device
-make dmg            # Create DMG for Mac distribution
-make release-mac    # Create DMG with GitHub release instructions
-make release-ios    # Archive and upload iOS to App Store Connect
+make help               # Show all available commands
+make generate           # Generate Xcode project from project.yml
+make build-mac          # Build Mac app (debug)
+make build-ios          # Build iOS app for device
+make build-sim          # Build iOS app for simulator
+make run-mac            # Build and run Mac app
+make run-ios            # Build, install, and launch on device
+
+# Mac Distribution (Signed + Notarized)
+make check-signing      # Verify Developer ID certificate exists
+make setup-notary       # Store notarization credentials (one-time)
+make release-mac        # Full pipeline: build, sign, notarize, DMG
+make verify-signing     # Verify app code signature
+make verify-notarization # Verify DMG is notarized
+make notary-log         # Show recent notarization submissions
+
+# iOS Distribution (App Store)
+make release-ios        # Archive and upload iOS to App Store Connect
 ```
 
 ## Useful Debugging Commands
