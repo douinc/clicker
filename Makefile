@@ -6,8 +6,9 @@ export
 DERIVED_DATA = $(shell ls -td ~/Library/Developer/Xcode/DerivedData/Clicker-* 2>/dev/null | head -1)
 MAC_APP = $(DERIVED_DATA)/Build/Products/Debug/Clicker.app
 IOS_APP = $(DERIVED_DATA)/Build/Products/Debug-iphoneos/Clicker.app
+IOS_SIM_APP = $(DERIVED_DATA)/Build/Products/Debug-iphonesimulator/Clicker.app
 
-.PHONY: help generate build-mac build-ios build-all run-mac install-ios run-ios clean list-devices
+.PHONY: help generate build-mac build-ios build-all run-mac install-ios run-ios clean list-devices screenshot
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -49,3 +50,12 @@ clean: ## Clean build artifacts
 
 list-devices: ## List connected iOS devices
 	xcrun xctrace list devices
+
+screenshot: ## Build and run iOS app in screenshot mode (no trial banner)
+	xcodebuild -scheme ClickeriOS \
+		-destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
+		SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG SCREENSHOT_MODE' \
+		build
+	xcrun simctl boot "iPhone 16" 2>/dev/null || true
+	xcrun simctl install booted $(IOS_SIM_APP)
+	xcrun simctl launch booted com.dou.clicker-ios

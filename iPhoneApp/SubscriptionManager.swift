@@ -18,12 +18,17 @@ final class SubscriptionManager {
     private let trialTracker = TrialTracker()
 
     init() {
+        #if SCREENSHOT_MODE
+        // Force subscribed status for App Store screenshots
+        status = .subscribed(expirationDate: Date.distantFuture)
+        #else
         transactionListener = listenForTransactions()
 
         Task {
             await loadProducts()
             await updateSubscriptionStatus()
         }
+        #endif
     }
 
     /// Whether the user has access to premium features (trial or subscribed)
