@@ -1,25 +1,58 @@
-# ClickerRemote / ClickerRemoteReceiver
+<p align="center">
+  <img src="public/logo/ios-logo.png" alt="ClickerRemote" height="120">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="public/logo/mac-logo.png" alt="ClickerRemoteReceiver" height="120">
+</p>
 
-> Control your presentations from your iPhone — no dongles, no bs.
+<h1 align="center">ClickerRemote / ClickerRemoteReceiver</h1>
 
-![Platform](https://img.shields.io/badge/platform-macOS%2014%2B%20%7C%20iOS%2018%2B-blue)
-![Swift](https://img.shields.io/badge/Swift-5.9-orange)
-![License](https://img.shields.io/badge/license-MIT-green)
+<p align="center">
+  <strong>Control your presentations from your iPhone — no dongles, no BS.</strong>
+</p>
 
-ClickerRemote/ClickerRemoteReceiver is a fully open-source presentation remote/receiver that turns your iPhone into a wireless clicker for your Mac. It uses peer-to-peer networking — no cloud servers, no account required, no bs.
+<p align="center">
+  <a href="https://apps.apple.com/app/clickerremote"><img src="https://img.shields.io/badge/App_Store-Coming_Soon-blue?logo=apple" alt="App Store"></a>
+  <a href="https://github.com/douinc/clicker/releases"><img src="https://img.shields.io/badge/Mac-Download_DMG-black?logo=apple" alt="Download DMG"></a>
+  <a href="#"><img src="https://img.shields.io/badge/platform-macOS%2014%2B%20%7C%20iOS%2018%2B-lightgrey" alt="Platform"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+</p>
 
-You must install the ClickerRemoteReceiver in your Mac in order to properly use the ClickerRemote iOS app. Think of the ClickerRemoteReceiver as a wireless USB dongle and the ClickerRemote as a hardware clicker. Both are required to make it work.
+---
 
-## Why I Made This
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="public/screenshot/mac/1-running-menubar.png" alt="Mac Menu Bar" >
+      <br><strong>1. Run on Mac</strong>
+      <br><sub>Launch ClickerRemoteReceiver</sub>
+    </td>
+    <td align="center">
+      <img src="public/screenshot/ios/2-found-mac.png" alt="iPhone Found Mac" >
+      <br><strong>2. Run on iPhone</strong>
+      <br><sub>Open ClickerRemote</sub>
+    </td>
+    <td align="center">
+      <img src="public/screenshot/ios/6-timer-working.png" alt="Presenting" >
+      <br><strong>3. Present!</strong>
+      <br><sub>Tap to navigate slides</sub>
+    </td>
+  </tr>
+</table>
 
-Carrying around a $30 ~ $100 clicker in addition to a $1000 iPhone and $2000 Mac seems excessive.
+---
 
-For a presentation or product demo, I usually connect my device to an HDMI interface. I use Google Slides, Figma Slides, Powerpoint, Keynote depending on the subject.
+## Why ClickerRemote?
 
-Inspired by the iPhone or Apple Watch native functionality to control Keynote presentation in Mac, I wanted to bring this to other tools as well.
+Carrying a $30–$100 clicker alongside your $1000 iPhone and $2000 Mac seems excessive.
 
+ClickerRemote turns your iPhone into a wireless presentation remote. It works with **any app that uses arrow keys** — Keynote, PowerPoint, Google Slides, Figma, and more.
+- **No cloud servers** — Direct peer-to-peer connection
+- **No accounts** — Just install and go
+- **No internet needed** — Works completely offline
 
-## At A Glance
+---
+
+## How It Works
 
 ```mermaid
 graph LR
@@ -27,83 +60,122 @@ graph LR
         A[ClickerRemote App]
     end
     subgraph Mac
-        B[ClickerRemoteReceiver Menu Bar App]
+        B[ClickerRemoteReceiver<br/>Menu Bar App]
     end
     subgraph Presentation
-        C[Keynote / PowerPoint / Google Slides]
+        C[Keynote / PowerPoint /<br/>Google Slides / Figma]
     end
 
     A -->|WiFi / Bluetooth| B
     B -->|Keystrokes| C
 ```
 
-## Features
-
-- **Wireless Control** — Navigate slides with large, easy-to-hit touch targets
-- **Peer-to-Peer** — Direct connection via MultipeerConnectivity (WiFi or Bluetooth)
-- **Presentation Timer** — Track time with configurable haptic alerts
-- **Works Offline** — No internet connection needed
-- **Dark Mode** — Stage-friendly interface with liquid glass aesthetic
-- **Universal Compatibility** — Works with any app that uses arrow keys (Keynote, PowerPoint, Google Slides, Figma, etc.)
+---
 
 ## Installation
 
-### Mac App (ClickerRemoteReceiver)
+### Step 1: Install Mac App (Required)
 
-**Option 1: Download Release**
+The Mac app runs in your menu bar and receives commands from your iPhone.
 
-Download the latest `.dmg` from [Releases](https://github.com/douinc/clicker/releases), drag `Clicker.app` to Applications, and grant Accessibility permission when prompted.
-
-You can also download the Mac App via `brew`.
-
+**Option A: Homebrew (Recommended)**
 ```bash
-brew tap douinc/tap                                                                                                                                                                                                                        
+brew tap douinc/tap
 brew install --cask clicker-remote-receiver
 ```
 
-**Option 2: Build from Source**
+**Option B: Download DMG**
 
-```bash
-# Install XcodeGen if you haven't
-brew install xcodegen
+Download from [GitHub Releases](https://github.com/douinc/clicker/releases), open the DMG, and drag to Applications.
 
-# Clone and build
-git clone https://github.com/douinc/clicker.git
-cd clicker
-xcodegen generate
-xcodebuild -scheme ClickerMac -configuration Release build
+> **First launch:** Grant Accessibility permission when prompted (System Settings → Privacy & Security → Accessibility)
 
-# Run the app
-open ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products/Release/Clicker.app
-```
+### Step 2: Install iPhone App
 
-### iPhone App (ClickerRemote)
-
-Download from the [App Store](https://apps.apple.com/app/clicker) *(coming soon)*
+Download **ClickerRemote** from the [App Store](https://apps.apple.com/app/clicker) *(coming soon)*
 
 - 7-day free trial included
 - $19.99/year subscription
 
-## Usage
+---
 
-1. **Launch the Mac app** — Look for the Clicker icon in your menu bar
-2. **Grant Accessibility permission** — Required to send keystrokes to presentation apps
-3. **Open the iPhone app** — It will automatically discover your Mac
-4. **Tap to connect** — Select your Mac from the list
-5. **Present!** — Use the large buttons to navigate slides
-
-### Presentation Timer
-
-The built-in timer helps you stay on track during presentations:
+## Features
 
 | Feature | Description |
 |---------|-------------|
+| **Large Touch Targets** | Easy-to-hit buttons designed for stage use |
+| **Presentation Timer** | Track time with haptic alerts at custom intervals |
+| **Dark Mode** | Stage-friendly liquid glass aesthetic |
+| **Visual Progress** | Color-coded timer bar (green → yellow → orange → red) |
 | **Duration Presets** | 5, 10, 15, 20, 30 minutes or unlimited |
-| **Haptic Intervals** | Vibrate every 30s, 1m, 2m, or 5m |
-| **Visual Progress** | Color-coded bar (green → yellow → orange → red) |
-| **Overtime Alert** | Timer turns red when you exceed your time |
+| **Haptic Feedback** | Vibrate every 30s, 1m, 2m, or 5m |
 
-## Architecture
+---
+
+## Quick Start
+
+1. **Launch the Mac app** → Look for the icon in your menu bar
+2. **Grant Accessibility** → Required for sending keystrokes
+3. **Open the iPhone app** → It auto-discovers your Mac
+4. **Tap to connect** → Select your Mac from the list
+5. **Present!** → Tap the arrows to navigate slides
+
+---
+
+## Privacy
+
+Your presentations stay private:
+
+- **No accounts** — No sign-up required
+- **No cloud** — All communication is peer-to-peer
+- **No analytics** — We don't track you
+- **No data collection** — Nothing leaves your devices
+
+See our [Privacy Policy](PRIVACY_POLICY.md).
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Mac not appearing | Ensure both devices are on the same WiFi network |
+| Keystrokes not working | Grant Accessibility in System Settings → Privacy & Security |
+| Connection drops | Check that no firewall/VPN blocks local network |
+
+---
+
+## Build from Source
+
+<details>
+<summary>Click to expand developer instructions</summary>
+
+### Prerequisites
+
+- macOS 14.0+ (Sonoma)
+- Xcode 16.0+
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
+
+### Build
+
+```bash
+git clone https://github.com/douinc/clicker.git
+cd clicker
+xcodegen generate
+xcodebuild -scheme ClickerMac -configuration Release build
+```
+
+### Project Structure
+
+```
+clicker/
+├── project.yml          # XcodeGen configuration
+├── Shared/              # Shared code (RemoteCommand)
+├── MacApp/              # macOS menu bar app
+└── iPhoneApp/           # iOS remote control app
+```
+
+### Architecture
 
 ```mermaid
 sequenceDiagram
@@ -111,134 +183,31 @@ sequenceDiagram
     participant Mac
     participant Keynote
 
-    Mac->>Mac: Start advertising via MultipeerConnectivity
-    iPhone->>Mac: Browse & discover Mac
-    iPhone->>Mac: Connect request
-    Mac->>iPhone: Accept connection
+    Mac->>Mac: Advertise via MultipeerConnectivity
+    iPhone->>Mac: Discover & connect
 
     loop Presentation
-        iPhone->>Mac: Send "next" command (JSON)
-        Mac->>Keynote: Inject Right Arrow keystroke (CGEvent)
+        iPhone->>Mac: Send command (JSON)
+        Mac->>Keynote: Inject keystroke (CGEvent)
     end
 ```
 
-## Project Structure
-
-```
-clicker/
-├── project.yml          # XcodeGen configuration
-├── Shared/              # Shared code (RemoteCommand protocol)
-├── MacApp/              # macOS menu bar application
-│   ├── PresentationRemoteMacApp.swift
-│   ├── MacConnectionManager.swift
-│   └── KeystrokeSender.swift
-└── iPhoneApp/           # iOS remote control app
-    ├── PresentationRemoteiPhoneApp.swift
-    ├── iPhoneConnectionManager.swift
-    ├── PresentationTimer.swift
-    ├── SubscriptionManager.swift
-    └── PaywallView.swift
-```
-
-## Building from Source
-
-### Prerequisites
-
-- macOS 14.0+ (Sonoma)
-- Xcode 16.0+
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
-- Apple Developer account (for code signing)
-
-### Build Commands
-
-```bash
-# Generate Xcode project
-xcodegen generate
-
-# Build Mac app
-xcodebuild -scheme ClickerMac build
-
-# Build iOS app (simulator)
-xcodebuild -scheme ClickeriOS -destination 'generic/platform=iOS Simulator' build
-
-# Build iOS app (device)
-xcodebuild -scheme ClickeriOS -destination 'id=YOUR_DEVICE_ID' build
-```
-
-### Configuration
-
-To use your own signing identity, edit `project.yml`:
-
-```yaml
-settings:
-  base:
-    DEVELOPMENT_TEAM: YOUR_TEAM_ID
-```
-
-Then regenerate: `xcodegen generate`
-
-## Extending the App
-
-### Adding Custom Commands
-
-1. Add a new case to `RemoteCommand` in `Shared/RemoteCommand.swift`:
-
-```swift
-case blackScreen = "black"
-
-var keyCode: UInt16 {
-    switch self {
-    case .blackScreen: return 11  // 'B' key
-    // ...
-    }
-}
-```
-
-2. Add a button in the iPhone UI to trigger it.
-
-### Common Key Codes
-
-| Key | Code | Use |
-|-----|------|-----|
-| Left Arrow | 123 | Previous slide |
-| Right Arrow | 124 | Next slide |
-| Escape | 53 | End presentation |
-| B | 11 | Black screen (PowerPoint) |
-| W | 13 | White screen (PowerPoint) |
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Mac not appearing | Ensure both devices are on the same WiFi network |
-| Keystrokes not working | Grant Accessibility permission in System Settings → Privacy & Security |
-| Connection drops | Check that no firewall or VPN is blocking local network traffic |
-
-## Privacy
-
-Clicker respects your privacy:
-
-- **No accounts** — No sign-up required
-- **No cloud** — All communication is peer-to-peer
-- **No analytics** — We don't track your usage
-- **No data collection** — Your presentations stay on your devices
-
-See our full [Privacy Policy](PRIVACY_POLICY.md).
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+</details>
 
 ---
 
-Made with ❤️ by [DOU Inc.](https://github.com/douinc)
+## Contributing
+
+Contributions welcome! Fork, create a branch, and open a PR.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE).
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/douinc">DOU Inc.</a>
+</p>
