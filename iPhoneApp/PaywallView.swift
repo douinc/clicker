@@ -28,8 +28,8 @@ struct PaywallView: View {
             }
             .padding()
         }
-        .subscriptionStoreControlStyle(.prominentPicker)
-        .subscriptionStoreButtonLabel(.multiline)
+        .subscriptionStoreControlStyle(.buttons)
+        .subscriptionStoreButtonLabel(.action)
         .storeButton(.visible, for: .restorePurchases)
         .onInAppPurchaseCompletion { _, result in
             if case .success = result {

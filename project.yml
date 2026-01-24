@@ -86,7 +86,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
         PRODUCT_NAME: ClickerRemote
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        MARKETING_VERSION: "1.1"
+        MARKETING_VERSION: "1.2"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
