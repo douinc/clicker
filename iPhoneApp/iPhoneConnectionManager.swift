@@ -1,5 +1,6 @@
 import Foundation
 import MultipeerConnectivity
+import WatchConnectivity
 import Combine
 
 // MARK: - iPhone Connection Manager
@@ -26,14 +27,41 @@ class iPhoneConnectionManager: NSObject, ObservableObject {
 
     // MARK: - Haptic Feedback
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    
+
+    // MARK: - Watch Connectivity
+    private var watchSession: WCSession?
+
     // MARK: - Initialization
     override init() {
         self.myPeerID = MCPeerID(displayName: UIDevice.current.name)
         super.init()
         setupSession()
+        setupWatchConnectivity()
         feedbackGenerator.prepare()
         startBrowsing()
+    }
+
+    private func setupWatchConnectivity() {
+        if WCSession.isSupported() {
+            watchSession = WCSession.default
+            watchSession?.delegate = self
+            watchSession?.activate()
+            print("📱 WatchConnectivity activated")
+        }
+    }
+
+    private func updateWatchWithConnectionStatus() {
+        guard let watchSession = watchSession,
+              watchSession.activationState == .activated,
+              watchSession.isPaired,
+              watchSession.isWatchAppInstalled else { return }
+
+        do {
+            try watchSession.updateApplicationContext(["connectedToMac": isConnected])
+            print("📱 Sent connection status to watch: \(isConnected)")
+        } catch {
+            print("📱 Failed to update watch context: \(error.localizedDescription)")
+        }
     }
     
     private func setupSession() {
@@ -187,6 +215,7 @@ extension iPhoneConnectionManager: MCSessionDelegate {
                 self.reconnectTimer?.invalidate()
                 self.reconnectTimer = nil
                 self.startKeepalive()
+                self.updateWatchWithConnectionStatus()
                 // Keep browsing active for faster reconnection on hotspot
                 self.isSearching = false
 
@@ -200,6 +229,7 @@ extension iPhoneConnectionManager: MCSessionDelegate {
                     self.connectedMac = nil
                     self.isConnected = false
                     self.stopKeepalive()
+                    self.updateWatchWithConnectionStatus()
                     // Auto-reconnect if we had a previous connection
                     if self.lastConnectedMacName != nil {
                         self.statusMessage = "Connection lost, reconnecting..."
@@ -258,5 +288,49 @@ extension iPhoneConnectionManager: MCNearbyServiceBrowserDelegate {
             self.isSearching = false
             self.statusMessage = "Error: \(error.localizedDescription)"
         }
+    }
+}
+
+// MARK: - WCSessionDelegate (Watch Connectivity)
+extension iPhoneConnectionManager: WCSessionDelegate {
+
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if let error = error {
+            print("📱 WCSession activation failed: \(error.localizedDescription)")
+        } else {
+            print("📱 WCSession activated: \(activationState.rawValue)")
+            DispatchQueue.main.async {
+                self.updateWatchWithConnectionStatus()
+            }
+        }
+    }
+
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        print("📱 WCSession became inactive")
+    }
+
+    func sessionDidDeactivate(_ session: WCSession) {
+        print("📱 WCSession deactivated, reactivating...")
+        session.activate()
+    }
+
+    // Handle messages from Apple Watch
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
+        guard let command = message["command"] as? String else {
+            replyHandler(["error": "Invalid command", "connectedToMac": isConnected])
+            return
+        }
+
+        print("📱 Received command from watch: \(command)")
+
+        // Relay command to Mac
+        if let remoteCommand = RemoteCommand(rawValue: command) {
+            DispatchQueue.main.async {
+                self.sendCommand(remoteCommand)
+            }
+        }
+
+        // Reply with current connection status
+        replyHandler(["success": true, "connectedToMac": isConnected])
     }
 }
