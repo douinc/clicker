@@ -1,0 +1,89 @@
+name: Wiki Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wiki/**'
+      - '**.swift'
+      - 'project.yml'
+      - 'CLAUDE.md'
+      - 'README.md'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force wiki update even without code changes'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  # Job 1: Simple sync when only wiki/ files change
+  sync-wiki:
+    if: github.event_name == 'push' && !contains(github.event.head_commit.modified, '.swift')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync to GitHub Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -d "wiki" ]; then
+            echo "⚠️ No wiki directory found"
+            exit 0
+          fi
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git" wiki-repo 2>/dev/null || {
+            echo "⚠️ Wiki not initialized. Create a wiki page manually first at:"
+            echo "https://github.com/${{ github.repository }}/wiki"
+            exit 0
+          }
+
+          rm -rf wiki-repo/*
+          cp -r wiki/* wiki-repo/
+
+          cd wiki-repo
+          git add -A
+
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to sync"
+          else
+            git commit -m "docs: sync wiki from ${{ github.sha }}"
+            git push
+            echo "✅ Wiki synced successfully"
+          fi
+
+  # Job 2: AI-powered update when code changes
+  update-wiki:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.event.head_commit.modified, '.swift'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "files=ALL" >> $GITHUB_OUTPUT
+          else
+            FILES=$(git diff --name-only HEAD~1 HEAD | tr '\n' ' ')
+            echo "files=$FILES" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Wiki with Claude
+        uses: douinc/douinc-cloud-action/actions/wiki-sync@main
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          changed_files: ${{ steps.changed.outputs.files }}
+          language: 'en'
+          timeout_minutes: '10'
