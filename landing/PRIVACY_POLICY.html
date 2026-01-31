@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - ClickerRemote</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
+        :root { --dot-color: #00ff41; --dot-dim: #004d14; --bg-color: #0a0a0a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'VT323', monospace; background: var(--bg-color); color: var(--dot-color); min-height: 100vh; line-height: 1.8; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle, var(--dot-dim) 1px, transparent 1px); background-size: 8px 8px; pointer-events: none; z-index: -1; opacity: 0.5; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 1.2rem; text-shadow: 0 0 10px var(--dot-color); margin-bottom: 40px; text-align: center; }
+        h2 { font-family: 'Press Start 2P', cursive; font-size: 0.8rem; margin: 30px 0 15px 0; color: #00cc33; }
+        p, li { font-size: 1.3rem; margin-bottom: 15px; opacity: 0.9; }
+        ul { margin-left: 30px; margin-bottom: 20px; }
+        a { color: var(--dot-color); }
+        .back-link { display: inline-block; margin-bottom: 30px; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; text-decoration: none; padding: 10px 20px; border: 1px solid var(--dot-color); }
+        .back-link:hover { background: var(--dot-color); color: var(--bg-color); }
+        .updated { font-size: 1rem; opacity: 0.6; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← BACK</a>
+        <h1>PRIVACY POLICY</h1>
+        <p class="updated">Last updated: January 31, 2026</p>
+        <h2>[ OVERVIEW ]</h2>
+        <p>ClickerRemote and ClickerRemoteReceiver are designed with privacy as a core principle. We do not collect, store, or transmit any personal data to external servers.</p>
+        <h2>[ DATA COLLECTION ]</h2>
+        <p>We do NOT collect:</p>
+        <ul><li>Personal information</li><li>Usage analytics</li><li>Device identifiers</li><li>Location data</li><li>Presentation content</li></ul>
+        <h2>[ LOCAL NETWORK ]</h2>
+        <p>The apps communicate directly between your iPhone and Mac over your local network:</p>
+        <ul><li>Uses peer-to-peer technology</li><li>Never routes through external servers</li><li>Stays within your local network</li></ul>
+        <h2>[ PERMISSIONS ]</h2>
+        <p><strong>iOS App:</strong></p><ul><li>Local Network - Required to discover and connect to Mac</li></ul>
+        <p><strong>Mac App:</strong></p><ul><li>Accessibility - Required to simulate keyboard input</li><li>Local Network - Required to receive connections</li></ul>
+        <h2>[ CONTACT ]</h2>
+        <p>Questions? <a href="mailto:team@dou.so">team@dou.so</a></p>
+        <p>Source: <a href="https://github.com/douinc/clicker">github.com/douinc/clicker</a></p>
+    </div>
+</body>
+</html>
