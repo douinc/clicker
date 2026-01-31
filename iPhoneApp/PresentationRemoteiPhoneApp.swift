@@ -20,6 +20,7 @@ struct ClickerApp: App {
 /// Gates the app behind subscription/trial status
 struct SubscriptionGateView: View {
     @Environment(SubscriptionManager.self) private var subscriptionManager
+    @Environment(\.scenePhase) private var scenePhase
     @ObservedObject var connectionManager: iPhoneConnectionManager
     @ObservedObject var timer: PresentationTimer
     @State private var showPaywall = false
@@ -51,6 +52,15 @@ struct SubscriptionGateView: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            // Refresh subscription status when app becomes active
+            // Catches purchases made outside the app or subscription renewals
+            if newPhase == .active {
+                Task {
+                    await subscriptionManager.updateSubscriptionStatus()
+                }
+            }
         }
     }
 }
