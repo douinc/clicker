@@ -90,7 +90,33 @@ final class SubscriptionManager {
 
     /// Update the current subscription status by checking entitlements and trial
     func updateSubscriptionStatus() async {
-        // Check for active subscription first
+        // First, try using the subscription status API for more reliable checking
+        if let product = yearlyProduct {
+            do {
+                let statuses = try await product.subscription?.status ?? []
+                for status in statuses {
+                    guard case .verified(_) = status.renewalInfo,
+                          case .verified(let transaction) = status.transaction else {
+                        continue
+                    }
+
+                    // Check if subscription is active
+                    switch status.state {
+                    case .subscribed, .inGracePeriod, .inBillingRetryPeriod:
+                        if let expirationDate = transaction.expirationDate {
+                            self.status = .subscribed(expirationDate: expirationDate)
+                            return
+                        }
+                    default:
+                        continue
+                    }
+                }
+            } catch {
+                // Fall through to entitlements check
+            }
+        }
+
+        // Fallback: Check current entitlements
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
                transaction.productType == .autoRenewable,
