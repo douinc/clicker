@@ -1,52 +1,45 @@
 name: 'Wiki Auto-Sync'
-# Claude Code를 사용하여 코드 변경 시 Wiki를 자동으로 업데이트합니다
+# Claude Code를 사용하여 PR 머지 시 Wiki를 자동으로 업데이트합니다
 
 on:
-  push:
-    branches: [main]
+  # Trigger on PR comments containing the trigger phrase
+  issue_comment:
+    types: [created]
+  # Trigger when wiki-sync label is added to a PR
+  pull_request:
+    types: [labeled, opened, synchronize]
+  # Manual trigger
   workflow_dispatch:
     inputs:
-      changed_files:
-        description: '변경된 파일 목록 (space-separated)'
-        required: false
-        default: 'ALL'
       language:
         description: '문서 언어 (en, ko, both)'
         required: false
         default: 'both'
-      timeout_minutes:
-        description: 'Claude 실행 타임아웃 (분)'
-        required: false
-        default: '10'
 
 jobs:
   sync-wiki:
     runs-on: ubuntu-latest
+    # Only run on PR events with wiki-sync label, or issue_comment with trigger phrase
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'wiki-sync')) ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/sync-wiki'))
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Validate authentication
-      env:
-        CLAUDE_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      run: |
-        if [ -z "$CLAUDE_OAUTH" ] && [ -z "$ANTHROPIC_KEY" ]; then
-          echo "❌ Error: Either CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY secret is required"
-          exit 1
-        fi
-
     - name: Run Claude Code Action
       uses: anthropics/claude-code-action@v1
       with:
         claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+        trigger_phrase: '/sync-wiki'
+        label_trigger: 'wiki-sync'
         prompt: |
           You are a documentation expert. Analyze the code changes and update the wiki accordingly.
 
-          Changed files: ${{ inputs.changed_files || 'ALL' }}
           Language: ${{ inputs.language || 'both' }}
 
           Tasks:
@@ -63,12 +56,6 @@ jobs:
           - both: Create both (use -ko suffix for Korean, e.g., API.md and API-ko.md)
 
           Output files to wiki/ directory.
-        allowed_tools: |
-          Read
-          Write
-          Edit
-          Bash(git diff:*, git log:*, find:*, cat:*)
-        timeout_minutes: ${{ inputs.timeout_minutes || '10' }}
 
     - name: Sync to GitHub Wiki
       env:
@@ -78,24 +65,24 @@ jobs:
           echo "⚠️ No wiki directory found, skipping sync"
           exit 0
         fi
-        
+
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        
+
         REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git"
-        
+
         git clone "$REPO_URL" wiki-repo 2>/dev/null || {
           echo "⚠️ Wiki not initialized. Please create a wiki page manually first."
           echo "Go to: https://github.com/${{ github.repository }}/wiki"
           exit 0
         }
-        
+
         rm -rf wiki-repo/*
         cp -r wiki/* wiki-repo/
-        
+
         cd wiki-repo
         git add -A
-        
+
         if git diff --staged --quiet; then
           echo "ℹ️ No changes to sync"
         else
