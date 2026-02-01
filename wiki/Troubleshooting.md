@@ -1,0 +1,223 @@
+# Troubleshooting
+
+Common issues and their solutions.
+
+## Connection Issues
+
+### Mac not appearing on iPhone
+
+**Symptoms**: iPhone doesn't see the Mac in the device list
+
+**Solutions**:
+
+1. **Same Network**: Ensure both devices are on the same WiFi network
+2. **Restart Apps**: Quit and relaunch both apps
+3. **Check Firewall**: Disable macOS firewall temporarily to test
+4. **Bonjour Services**: Verify Info.plist has correct Bonjour entries:
+   ```xml
+   <key>NSBonjourServices</key>
+   <array>
+       <string>_clickerremote._tcp</string>
+       <string>_clickerremote._udp</string>
+   </array>
+   ```
+
+### Connection Drops Frequently
+
+**Solutions**:
+
+1. **Disable VPN**: VPNs can interfere with local network discovery
+2. **Check WiFi**: Ensure stable WiFi connection on both devices
+3. **Bluetooth**: Try connecting via Bluetooth instead (move devices closer)
+
+## Keystroke Issues
+
+### Keystrokes Not Working
+
+**Symptoms**: Connected successfully but slides don't change
+
+**Solutions**:
+
+1. **Grant Accessibility Permission**:
+   - Go to System Settings → Privacy & Security → Accessibility
+   - Find and enable ClickerRemoteReceiver
+   - If already enabled, toggle off and on
+
+2. **Check Frontmost App**: Ensure your presentation app (Keynote, PowerPoint) is in focus
+
+3. **Test with TextEdit**: Open TextEdit and try — you should see up/down arrow behavior
+
+### Wrong Key Actions
+
+**Symptoms**: Slides skip or behave unexpectedly
+
+**Solutions**:
+
+- Different presentation apps may use different keys
+- ClickerRemote sends Up/Down arrow keys
+- Most apps: Down = Next, Up = Previous
+- Some apps may be configured differently
+
+## Build Issues
+
+### "Signing requires development team"
+
+**Solution**:
+
+1. Open `project.yml`
+2. Find `DEVELOPMENT_TEAM: HD35YQ72U4`
+3. Replace with your Team ID
+4. Run `xcodegen generate`
+
+Find your Team ID:
+```bash
+security find-identity -v -p codesigning
+```
+
+### Notarization Fails
+
+**Check the log**:
+```bash
+make notary-log
+# Then view specific submission:
+xcrun notarytool log <submission-id> --keychain-profile notarytool-profile
+```
+
+**Common Causes**:
+
+| Error | Fix |
+|-------|-----|
+| Wrong certificate | Use "Developer ID Application", not "Apple Distribution" |
+| Missing timestamp | Ensure `--timestamp` flag in signing |
+| Debug entitlement | Build Release config, not Debug |
+
+**Verify Settings in project.yml**:
+```yaml
+configs:
+  Release:
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "Developer ID Application"
+    CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+    OTHER_CODE_SIGN_FLAGS: "--timestamp"
+```
+
+### "Unable to find destination"
+
+**Solution**: Specify OS version explicitly:
+
+```bash
+xcodebuild -scheme ClickeriOS \
+  -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
+  build
+```
+
+List available destinations:
+```bash
+xcodebuild -scheme ClickeriOS -showdestinations
+```
+
+### MultipeerConnectivity Not Working
+
+**Symptoms**: Apps build but can't discover each other
+
+**Solution**: Verify `project.yml` has network permissions in `info.properties`:
+
+```yaml
+info:
+  properties:
+    NSBonjourServices:
+      - _clickerremote._tcp
+      - _clickerremote._udp
+    NSLocalNetworkUsageDescription: "..."
+```
+
+Keys must be in `info.properties`, not just the source Info.plist files.
+
+## SwiftUI Issues
+
+### Section Syntax Error
+
+**Wrong**:
+```swift
+Section("Header") {
+    // content
+} footer: {
+    Text("Footer")
+}
+```
+
+**Correct**:
+```swift
+Section {
+    // content
+} header: {
+    Text("Header")
+} footer: {
+    Text("Footer")
+}
+```
+
+## Subscription Issues
+
+### Trial Not Starting
+
+**Symptoms**: App immediately shows paywall
+
+**Solutions**:
+
+1. Delete app and reinstall (trial is Keychain-stored)
+2. Check device date is correct
+3. Reset Keychain entry (development only):
+   ```swift
+   // Delete: com.dou.clicker.trial.start from Keychain
+   ```
+
+### Purchases Not Restoring
+
+**Solutions**:
+
+1. Tap "Restore Purchases" in paywall
+2. Ensure signed in with correct Apple ID
+3. Check App Store Connect for transaction status
+
+## Debugging Commands
+
+### Check Built Info.plist
+
+```bash
+find ~/Library/Developer/Xcode/DerivedData/Clicker-*/Build/Products \
+  -name "Info.plist" -exec plutil -p {} \;
+```
+
+### List Schemes
+
+```bash
+xcodebuild -project Clicker.xcodeproj -list
+```
+
+### List Connected Devices
+
+```bash
+xcrun devicectl list devices
+```
+
+### List Simulators
+
+```bash
+xcrun simctl list devices available
+```
+
+### Check Code Signature
+
+```bash
+codesign -dv --verbose=4 /path/to/app
+```
+
+## Still Stuck?
+
+- Search [GitHub Issues](https://github.com/douinc/clicker/issues)
+- Open a new issue with:
+  - macOS/iOS version
+  - Xcode version
+  - Steps to reproduce
+  - Error messages or logs

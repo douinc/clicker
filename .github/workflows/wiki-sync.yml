@@ -1,0 +1,104 @@
+name: 'Wiki Auto-Sync'
+description: 'Claude Code를 사용하여 코드 변경 시 Wiki를 자동으로 업데이트합니다'
+author: 'Dou Inc'
+
+inputs:
+  claude_code_oauth_token:
+    description: 'Claude Code OAuth 토큰 (Pro/Max 사용자)'
+    required: false
+  anthropic_api_key:
+    description: 'Anthropic API Key (OAuth 없을 경우)'
+    required: false
+  github_token:
+    description: 'GitHub Token (wiki push용)'
+    required: true
+  changed_files:
+    description: '변경된 파일 목록 (space-separated)'
+    required: false
+    default: 'ALL'
+  language:
+    description: '문서 언어 (en, ko, both)'
+    required: false
+    default: 'both'
+  timeout_minutes:
+    description: 'Claude 실행 타임아웃 (분)'
+    required: false
+    default: '10'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate authentication
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.claude_code_oauth_token }}" ] && [ -z "${{ inputs.anthropic_api_key }}" ]; then
+          echo "❌ Error: Either claude_code_oauth_token or anthropic_api_key is required"
+          exit 1
+        fi
+
+    - name: Run Claude Code Action
+      uses: anthropics/claude-code-action@v1
+      with:
+        claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
+        anthropic_api_key: ${{ inputs.anthropic_api_key }}
+        prompt: |
+          You are a documentation expert. Analyze the code changes and update the wiki accordingly.
+          
+          Changed files: ${{ inputs.changed_files }}
+          Language: ${{ inputs.language }}
+          
+          Tasks:
+          0. Observe current wiki state
+          1. Analyze what changed in the codebase
+          2. Identify which wiki pages need updates
+          3. Update wiki/ directory with accurate documentation
+          4. Use [[Page-Name]] for internal wiki links
+          5. Include Mermaid diagrams where helpful. Don't use raw text diagrams in codeblocks.
+          
+          Language instructions:
+          - en: English only
+          - ko: Korean only  
+          - both: Create both (use -ko suffix for Korean, e.g., API.md and API-ko.md)
+          
+          Output files to wiki/ directory.
+        allowed_tools: |
+          Read
+          Write
+          Edit
+          Bash(git diff:*, git log:*, find:*, cat:*)
+        timeout_minutes: ${{ inputs.timeout_minutes }}
+
+    - name: Sync to GitHub Wiki
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      run: |
+        if [ ! -d "wiki" ]; then
+          echo "⚠️ No wiki directory found, skipping sync"
+          exit 0
+        fi
+        
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git"
+        
+        git clone "$REPO_URL" wiki-repo 2>/dev/null || {
+          echo "⚠️ Wiki not initialized. Please create a wiki page manually first."
+          echo "Go to: https://github.com/${{ github.repository }}/wiki"
+          exit 0
+        }
+        
+        rm -rf wiki-repo/*
+        cp -r wiki/* wiki-repo/
+        
+        cd wiki-repo
+        git add -A
+        
+        if git diff --staged --quiet; then
+          echo "ℹ️ No changes to sync"
+        else
+          git commit -m "docs: auto-update wiki from ${{ github.sha }}"
+          git push
+          echo "✅ Wiki synced successfully"
+        fi
