@@ -1,146 +1,184 @@
 import SwiftUI
+import Combine
 
 // MARK: - Mac App Entry Point
+
 @main
 struct ClickerMacApp: App {
-    @StateObject private var connectionManager = MacConnectionManager()
-    @StateObject private var appState = AppState()
+    @StateObject private var coordinator = AppCoordinator.shared
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
         // Menu Bar App
         MenuBarExtra {
-            MenuBarView(connectionManager: connectionManager, appState: appState)
+            MenuBarView(
+                viewModel: coordinator.menuBarViewModel,
+                preferences: coordinator.preferences
+            )
         } label: {
-            if let nsImage = NSImage(named: "MenuBarIcon") {
-                Image(nsImage: nsImage)
-                    .renderingMode(.template)
-            } else {
-                // Fallback to SF Symbol if custom icon not found
-                Image(systemName: appState.isConnected ? "cursorarrow.click.2" : "cursorarrow.click")
-            }
+            MenuBarIcon(isConnected: coordinator.menuBarViewModel.isConnected)
         }
 
         // Settings Window
         Settings {
-            SettingsView()
+            SettingsView(preferences: coordinator.preferences)
         }
     }
 }
 
-// MARK: - App State
-class AppState: ObservableObject {
-    @Published var isConnected = false
-}
+// MARK: - App Delegate
 
-// MARK: - Menu Bar View
-struct MenuBarView: View {
-    @ObservedObject var connectionManager: MacConnectionManager
-    @ObservedObject var appState: AppState
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+    private var welcomeWindow: NSWindow?
+    private var cancellables = Set<AnyCancellable>()
 
-    var body: some View {
-        Group {
-            Text(connectionManager.statusMessage)
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        AppCoordinator.shared.didFinishLaunching()
 
-            if !connectionManager.connectedDevices.isEmpty {
-                ForEach(connectionManager.connectedDevices, id: \.displayName) { peer in
-                    Label(peer.displayName, systemImage: "iphone")
+        // Observe when welcome should be hidden (coordinator handles the logic)
+        AppCoordinator.shared.$showWelcome
+            .dropFirst() // Skip initial value
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] showWelcome in
+                if !showWelcome {
+                    self?.closeWelcomeWindow()
                 }
             }
+            .store(in: &cancellables)
 
-            if let lastCommand = connectionManager.lastCommand {
-                Text("Last: \(lastCommand.rawValue)")
-            }
-
-            Divider()
-
-            if connectionManager.isAdvertising {
-                Button("Stop Listening") {
-                    connectionManager.stopAdvertising()
-                }
-            } else {
-                Button("Start Listening") {
-                    if !KeystrokeSender.shared.hasAccessibilityPermission {
-                        KeystrokeSender.shared.requestAccessibilityPermission()
-                    }
-                    connectionManager.startAdvertising()
-                }
-            }
-
-            Divider()
-
-            if KeystrokeSender.shared.hasAccessibilityPermission {
-                Label("Accessibility OK", systemImage: "checkmark.circle")
-            } else {
-                Button("Grant Accessibility") {
-                    KeystrokeSender.shared.requestAccessibilityPermission()
-                }
-            }
-
-            Divider()
-
-            Button("Test Previous") {
-                KeystrokeSender.shared.previousSlide()
-            }.keyboardShortcut("[")
-
-            Button("Test Next") {
-                KeystrokeSender.shared.nextSlide()
-            }.keyboardShortcut("]")
-
-            Divider()
-
-            Button("Restart") {
-                let url = Bundle.main.bundleURL
-                let configuration = NSWorkspace.OpenConfiguration()
-                configuration.createsNewApplicationInstance = true
-                NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, _ in
-                    DispatchQueue.main.async {
-                        NSApplication.shared.terminate(nil)
-                    }
-                }
-            }.keyboardShortcut("r")
-
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }.keyboardShortcut("q")
+        // Show welcome window if needed
+        if AppCoordinator.shared.showWelcome {
+            showWelcomeWindow()
         }
-        .onAppear {
-            connectionManager.onCommandReceived = { command in
-                KeystrokeSender.shared.sendCommand(command)
-            }
+    }
+
+    private func showWelcomeWindow() {
+        // Create the welcome window
+        let welcomeView = WelcomeView(viewModel: AppCoordinator.shared.welcomeViewModel)
+        let hostingController = NSHostingController(rootView: welcomeView)
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "Welcome to Clicker"
+        window.styleMask = [.titled, .closable, .fullSizeContentView]
+        window.titlebarAppearsTransparent = true
+        window.isMovableByWindowBackground = true
+        window.setContentSize(NSSize(width: 520, height: 560))
+        window.center()
+        window.delegate = self // Handle manual close
+
+        // Keep reference to prevent deallocation
+        self.welcomeWindow = window
+
+        // Show the window
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    private func closeWelcomeWindow() {
+        welcomeWindow?.close()
+        welcomeWindow = nil
+    }
+
+    // MARK: - NSWindowDelegate
+
+    func windowWillClose(_ notification: Notification) {
+        guard let closingWindow = notification.object as? NSWindow,
+              closingWindow === welcomeWindow else {
+            return
         }
-        .onChange(of: connectionManager.connectedDevices) { devices in
-            appState.isConnected = !devices.isEmpty
+
+        // User manually closed the window - mark onboarding as incomplete but still revert to accessory
+        welcomeWindow = nil
+
+        // Revert to accessory mode (no dock icon)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            NSApp.setActivationPolicy(.accessory)
         }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // Cleanup
+        cancellables.removeAll()
     }
 }
 
 // MARK: - Settings View
+
 struct SettingsView: View {
+    @ObservedObject var preferences: PreferencesManager
+    @State private var showResetConfirmation = false
+
     var body: some View {
         Form {
             Section("About") {
-                Text("ClickerRemoteReceiver")
-                    .font(.headline)
-                Text("Control presentations from your iPhone")
-                    .foregroundColor(.secondary)
+                HStack {
+                    Image(systemName: "cursorarrow.click.2")
+                        .font(.largeTitle)
+                        .foregroundStyle(.blue)
+
+                    VStack(alignment: .leading) {
+                        Text("ClickerRemoteReceiver")
+                            .font(.headline)
+                        Text("Control presentations from your iPhone")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                            Text("Version \(version)")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
             }
 
             Section("Permissions") {
                 HStack {
                     Text("Accessibility Permission")
                     Spacer()
-                    if KeystrokeSender.shared.hasAccessibilityPermission {
+                    if PermissionService.shared.hasAccessibilityPermission {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
+                        Text("Granted")
+                            .foregroundColor(.secondary)
                     } else {
                         Button("Grant Permission") {
-                            KeystrokeSender.shared.requestAccessibilityPermission()
+                            PermissionService.shared.requestPermission()
                         }
                     }
                 }
             }
+
+            Section("Advanced") {
+                Toggle("Show Debug Menu", isOn: $preferences.debugMenuEnabled)
+
+                Button("Reset Onboarding") {
+                    showResetConfirmation = true
+                }
+                .foregroundStyle(.red)
+            }
+
+            Section("Help") {
+                Link(destination: URL(string: "https://github.com/douinc/clicker")!) {
+                    Label("View on GitHub", systemImage: "link")
+                }
+
+                Link(destination: URL(string: "https://github.com/douinc/clicker/issues")!) {
+                    Label("Report an Issue", systemImage: "exclamationmark.bubble")
+                }
+            }
         }
+        .formStyle(.grouped)
         .padding()
-        .frame(width: 320, height: 180)
+        .frame(width: 400, height: 480)
+        .alert("Reset Onboarding?", isPresented: $showResetConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                preferences.reset()
+            }
+        } message: {
+            Text("This will show the welcome screen again on next launch.")
+        }
     }
 }

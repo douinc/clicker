@@ -10,6 +10,27 @@ class MacConnectionManager: NSObject, ObservableObject {
     @Published var connectedDevices: [MCPeerID] = []
     @Published var lastCommand: RemoteCommand?
     @Published var statusMessage = "Not running"
+
+    // MARK: - Debug Properties
+    @Published var debugLogs: [DebugLogEntry] = []
+    @Published var sessionState: String = "None"
+    @Published var advertiserState: String = "None"
+    @Published var lastError: String?
+
+    struct DebugLogEntry: Identifiable {
+        let id = UUID()
+        let timestamp: Date
+        let message: String
+        let level: LogLevel
+
+        enum LogLevel: String {
+            case info = "ℹ️"
+            case success = "✅"
+            case warning = "⚠️"
+            case error = "❌"
+            case network = "📡"
+        }
+    }
     
     // MARK: - Multipeer Properties
     private let myPeerID: MCPeerID
@@ -19,24 +40,62 @@ class MacConnectionManager: NSObject, ObservableObject {
     // MARK: - Callback for keystroke
     var onCommandReceived: ((RemoteCommand) -> Void)?
     
+    // MARK: - Debug Logging
+    private func debugLog(_ message: String, level: DebugLogEntry.LogLevel = .info) {
+        let entry = DebugLogEntry(timestamp: Date(), message: message, level: level)
+        DispatchQueue.main.async {
+            self.debugLogs.insert(entry, at: 0)
+            if self.debugLogs.count > 100 {
+                self.debugLogs = Array(self.debugLogs.prefix(100))
+            }
+        }
+        print("[\(level.rawValue)] \(message)")
+    }
+
+    func clearDebugLogs() {
+        debugLogs.removeAll()
+    }
+
+    var debugInfo: String {
+        """
+        === Mac Connection Debug ===
+        My Peer ID: \(myPeerID.displayName)
+        Service Type: \(RemoteServiceConfig.serviceType)
+
+        Session State: \(sessionState)
+        Advertiser State: \(advertiserState)
+        Is Advertising: \(isAdvertising)
+
+        Connected Devices: \(connectedDevices.map { $0.displayName }.joined(separator: ", "))
+        Session Peers: \(session?.connectedPeers.map { $0.displayName }.joined(separator: ", ") ?? "None")
+
+        Last Error: \(lastError ?? "None")
+        """
+    }
+
     // MARK: - Initialization
     override init() {
         self.myPeerID = MCPeerID(displayName: Host.current().localizedName ?? "Mac")
         super.init()
+        debugLog("Initializing with peer ID: \(myPeerID.displayName)", level: .info)
         setupSession()
     }
     
     private func setupSession() {
+        debugLog("Setting up session with encryption: optional", level: .network)
         session = MCSession(
             peer: myPeerID,
             securityIdentity: nil,
-            encryptionPreference: .required
+            encryptionPreference: .optional  // Changed from .required - more reliable on real networks
         )
         session?.delegate = self
+        sessionState = "Created (encryption: optional)"
+        debugLog("Session created successfully", level: .success)
     }
-    
+
     // MARK: - Public Methods
     func startAdvertising() {
+        debugLog("Starting advertiser for service: \(RemoteServiceConfig.serviceType)", level: .network)
         advertiser = MCNearbyServiceAdvertiser(
             peer: myPeerID,
             discoveryInfo: nil,
@@ -44,18 +103,20 @@ class MacConnectionManager: NSObject, ObservableObject {
         )
         advertiser?.delegate = self
         advertiser?.startAdvertisingPeer()
-        
+
         isAdvertising = true
+        advertiserState = "Advertising: \(RemoteServiceConfig.serviceType)"
         statusMessage = "Waiting for iPhone to connect..."
-        print("📡 Started advertising as: \(myPeerID.displayName)")
+        debugLog("Advertiser started successfully", level: .success)
     }
-    
-    func stopAdvertising() {
+
+    func stopAdvertising(userInitiated: Bool = false) {
+        debugLog("Stopping advertiser (userInitiated: \(userInitiated))", level: .network)
         advertiser?.stopAdvertisingPeer()
         advertiser = nil
         isAdvertising = false
+        advertiserState = "Stopped"
         statusMessage = "Stopped"
-        print("🛑 Stopped advertising")
     }
     
     func disconnect() {
@@ -72,31 +133,35 @@ extension MacConnectionManager: MCSessionDelegate {
         DispatchQueue.main.async {
             switch state {
             case .connected:
-                print("✅ Connected to: \(peerID.displayName)")
+                self.debugLog("SESSION STATE: Connected to \(peerID.displayName)", level: .success)
+                self.sessionState = "Connected to \(peerID.displayName)"
                 if !self.connectedDevices.contains(peerID) {
                     self.connectedDevices.append(peerID)
                 }
                 self.statusMessage = "Connected to \(peerID.displayName)"
-                
+                self.lastError = nil
+
             case .connecting:
-                print("🔄 Connecting to: \(peerID.displayName)")
+                self.debugLog("SESSION STATE: Connecting to \(peerID.displayName)", level: .network)
+                self.sessionState = "Connecting to \(peerID.displayName)..."
                 self.statusMessage = "Connecting to \(peerID.displayName)..."
-                
+
             case .notConnected:
-                print("❌ Disconnected from: \(peerID.displayName)")
+                self.debugLog("SESSION STATE: Not connected (was: \(peerID.displayName))", level: .warning)
+                self.sessionState = "Not connected"
                 self.connectedDevices.removeAll { $0 == peerID }
                 if self.connectedDevices.isEmpty {
                     self.statusMessage = "Waiting for iPhone to reconnect..."
-                    // Ensure we're still advertising for reconnection
                     if self.advertiser == nil {
+                        self.debugLog("Re-starting advertiser for reconnection", level: .network)
                         self.startAdvertising()
                     }
                 } else {
                     self.statusMessage = "Connected to \(self.connectedDevices.count) device(s)"
                 }
-                
+
             @unknown default:
-                break
+                self.debugLog("SESSION STATE: Unknown state for \(peerID.displayName)", level: .warning)
             }
         }
     }
@@ -127,15 +192,18 @@ extension MacConnectionManager: MCSessionDelegate {
 extension MacConnectionManager: MCNearbyServiceAdvertiserDelegate {
     
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        print("📨 Received invitation from: \(peerID.displayName)")
-        // Auto-accept invitations (you could add UI for manual approval)
+        debugLog("ADVERTISER: Received invitation from '\(peerID.displayName)'", level: .network)
+        debugLog("Accepting invitation with session: \(session != nil ? "valid" : "NIL!")", level: .info)
         invitationHandler(true, session)
+        debugLog("Invitation accepted, waiting for connection...", level: .success)
     }
-    
+
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
-        print("❌ Failed to start advertising: \(error.localizedDescription)")
+        debugLog("ADVERTISER ERROR: \(error.localizedDescription)", level: .error)
         DispatchQueue.main.async {
             self.isAdvertising = false
+            self.advertiserState = "Error: \(error.localizedDescription)"
+            self.lastError = error.localizedDescription
             self.statusMessage = "Error: \(error.localizedDescription)"
         }
     }

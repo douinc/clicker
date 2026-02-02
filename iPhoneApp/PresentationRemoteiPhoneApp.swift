@@ -126,9 +126,26 @@ struct ContentView: View {
 struct ConnectionView: View {
     @ObservedObject var connectionManager: iPhoneConnectionManager
     @State private var isHelpExpanded = false
+    @State private var showDebugView = false
 
     var body: some View {
         VStack(spacing: 32) {
+            // Debug button in top-right corner
+            HStack {
+                Spacer()
+                Button {
+                    showDebugView = true
+                } label: {
+                    Image(systemName: "ant.fill")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .padding(12)
+                        .background(.ultraThinMaterial, in: Circle())
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 8)
+
             Spacer()
 
             // App Icon / Status
@@ -187,6 +204,9 @@ struct ConnectionView: View {
             HelpSetupSection(isExpanded: $isHelpExpanded)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
+        }
+        .sheet(isPresented: $showDebugView) {
+            ConnectionDebugView(connectionManager: connectionManager)
         }
     }
 }

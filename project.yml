@@ -38,6 +38,9 @@ targets:
         NSAppleEventsUsageDescription: "Clicker needs to send keystrokes to control your presentation software."
     entitlements:
       path: MacApp/ClickerMac.entitlements
+      properties:
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-mac

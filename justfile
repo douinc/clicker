@@ -47,6 +47,12 @@ build-ios:
 build-sim:
     xcodebuild -scheme ClickeriOS -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' build
 
+# Build and run iOS app in simulator
+run-sim: build-sim
+    xcrun simctl boot "iPhone 16" 2>/dev/null || true
+    xcrun simctl install booted "{{ ios_sim_app }}"
+    xcrun simctl launch booted com.dou.clicker-ios
+
 # Build and run Mac app
 run-mac: build-mac
     open "{{ mac_app }}"
@@ -62,6 +68,20 @@ install-ios: build-ios
 # Build, install, and launch iOS app on device
 run-ios: install-ios
     xcrun devicectl device process launch --device {{ env("DEVICECTL_ID", "") }} com.dou.clicker-ios
+
+# Uninstall iOS app from device (removes app + all data)
+uninstall-ios:
+    @if [ -z "${DEVICECTL_ID:-}" ]; then \
+        echo "Error: DEVICECTL_ID not set. Run 'xcrun devicectl list devices' to find your device UUID"; \
+        exit 1; \
+    fi
+    @echo "🗑️  Uninstalling ClickerRemote from device..."
+    xcrun devicectl device uninstall app --device {{ env("DEVICECTL_ID", "") }} com.dou.clicker-ios || echo "App not installed or already removed"
+    @echo "✅ App and all data removed"
+
+# Complete clean reinstall: uninstall, clean build, install fresh
+clean-install-ios: uninstall-ios clean build-ios install-ios
+    @echo "✅ Fresh installation complete"
 
 # Build and run iOS app in screenshot mode (no trial banner)
 screenshot:
