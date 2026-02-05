@@ -270,3 +270,13 @@ setup-notary:
 notary-log:
     @echo "📋 Recent notarization submissions:"
     xcrun notarytool history --keychain-profile {{ notary_profile }}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Homebrew Tap
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Trigger homebrew-tap update after GitHub release is created
+update-tap:
+    @echo "🍺 Triggering homebrew-tap update for v{{ version }}..."
+    gh workflow run update-clicker-cask.yml --repo douinc/homebrew-tap -f version={{ version }}
+    @echo "✅ Workflow triggered! Check: https://github.com/douinc/homebrew-tap/actions"

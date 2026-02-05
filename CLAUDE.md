@@ -103,10 +103,20 @@ make verify-notarization  # Verify DMG is notarized
 make notary-log           # Show recent notarization submissions
 ```
 
-**Create GitHub release:**
+**Create GitHub release and update Homebrew tap:**
 ```bash
-gh release create v1.0 ./build/ClickerRemoteReceiver-1.0.dmg --title 'Clicker v1.0' --notes 'Release notes'
+# Create the release
+gh release create v1.1 ./build/ClickerRemoteReceiver-1.1.dmg --title 'Clicker v1.1' --notes 'Release notes'
+
+# Trigger homebrew-tap update (auto-calculates SHA256)
+just update-tap
 ```
+
+The `update-tap` command triggers a GitHub Action in `douinc/homebrew-tap` that:
+1. Downloads the DMG from the release
+2. Calculates the SHA256 hash
+3. Updates the Cask formula
+4. Commits and pushes automatically
 
 ## Key Architecture Decisions
 
@@ -209,6 +219,7 @@ make release-mac        # Full pipeline: build, sign, notarize, DMG
 make verify-signing     # Verify app code signature
 make verify-notarization # Verify DMG is notarized
 make notary-log         # Show recent notarization submissions
+make update-tap         # Trigger homebrew-tap update after GitHub release
 
 # iOS Distribution (App Store)
 make release-ios        # Archive and upload iOS to App Store Connect
