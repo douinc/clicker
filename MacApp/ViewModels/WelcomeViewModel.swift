@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import AppKit
 
 /// View model for the welcome/onboarding wizard
 /// Manages step progression and permission validation
@@ -26,6 +27,7 @@ final class WelcomeViewModel: ObservableObject {
     @Published private(set) var currentStep: WelcomeStep = .introduction
     @Published private(set) var canProceed: Bool = true
     @Published private(set) var hasPermission: Bool = false
+    @Published private(set) var needsRestart: Bool = false
 
     // MARK: - Services
 
@@ -59,8 +61,15 @@ final class WelcomeViewModel: ObservableObject {
         permissionService.$hasAccessibilityPermission
             .receive(on: DispatchQueue.main)
             .sink { [weak self] hasPermission in
-                self?.hasPermission = hasPermission
-                self?.updateCanProceed()
+                guard let self = self else { return }
+
+                // Detect permission granted for the first time - requires restart
+                if hasPermission && !self.hasPermission && !self.needsRestart {
+                    self.needsRestart = true
+                }
+
+                self.hasPermission = hasPermission
+                self.updateCanProceed()
             }
             .store(in: &cancellables)
     }
@@ -125,5 +134,19 @@ final class WelcomeViewModel: ObservableObject {
 
     func stopPermissionPolling() {
         permissionService.stopPolling()
+    }
+
+    func restartApp() {
+        // Get the path to the current app
+        let bundlePath = Bundle.main.bundlePath
+
+        // Use a shell script to relaunch after a short delay
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "sleep 0.5; open \"\(bundlePath)\""]
+        task.launch()
+
+        // Terminate the current instance
+        NSApplication.shared.terminate(nil)
     }
 }

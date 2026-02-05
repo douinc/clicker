@@ -136,6 +136,46 @@ private struct FeatureRow: View {
 private struct PermissionStepView: View {
     @ObservedObject var viewModel: WelcomeViewModel
 
+    private var statusColor: Color {
+        if viewModel.needsRestart {
+            return .blue
+        } else if viewModel.hasPermission {
+            return .green
+        } else {
+            return .orange
+        }
+    }
+
+    private var statusIcon: String {
+        if viewModel.needsRestart {
+            return "arrow.clockwise.circle.fill"
+        } else if viewModel.hasPermission {
+            return "checkmark.shield.fill"
+        } else {
+            return "shield.fill"
+        }
+    }
+
+    private var statusTitle: String {
+        if viewModel.needsRestart {
+            return "Restart Required"
+        } else if viewModel.hasPermission {
+            return "Permission Granted"
+        } else {
+            return "Permission Required"
+        }
+    }
+
+    private var statusSubtitle: String {
+        if viewModel.needsRestart {
+            return "Please restart Clicker to activate the permission"
+        } else if viewModel.hasPermission {
+            return "Clicker can now control your presentations"
+        } else {
+            return "Clicker needs Accessibility permission to send keystrokes"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
@@ -143,22 +183,20 @@ private struct PermissionStepView: View {
             // Status icon
             ZStack {
                 Circle()
-                    .fill(viewModel.hasPermission ? Color.green.opacity(0.1) : Color.orange.opacity(0.1))
+                    .fill(statusColor.opacity(0.1))
                     .frame(width: 100, height: 100)
 
-                Image(systemName: viewModel.hasPermission ? "checkmark.shield.fill" : "shield.fill")
+                Image(systemName: statusIcon)
                     .font(.system(size: 44))
-                    .foregroundStyle(viewModel.hasPermission ? .green : .orange)
+                    .foregroundStyle(statusColor)
             }
 
             VStack(spacing: 12) {
-                Text(viewModel.hasPermission ? "Permission Granted" : "Permission Required")
+                Text(statusTitle)
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                Text(viewModel.hasPermission
-                     ? "Clicker can now control your presentations"
-                     : "Clicker needs Accessibility permission to send keystrokes")
+                Text(statusSubtitle)
                     .font(.title3)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -187,7 +225,28 @@ private struct PermissionStepView: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
+            } else if viewModel.needsRestart {
+                // Permission was just granted - need to restart
+                VStack(spacing: 16) {
+                    Text("macOS requires a restart for the permission to take effect.")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+
+                    Button {
+                        viewModel.restartApp()
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Restart Clicker")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
             } else {
+                // Permission was already granted before (app restarted)
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 48))
                     .foregroundStyle(.green)
