@@ -41,7 +41,8 @@ Common issues and their solutions.
 1. **Grant Accessibility Permission**:
    - Go to System Settings → Privacy & Security → Accessibility
    - Find and enable ClickerRemoteReceiver
-   - If already enabled, toggle off and on
+   - **Restart the app**: Click the menu bar icon → Debug → Restart App
+   - If already enabled, toggle off and on, then restart
 
 2. **Check Frontmost App**: Ensure your presentation app (Keynote, PowerPoint) is in focus
 

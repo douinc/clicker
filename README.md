@@ -88,7 +88,7 @@ brew install --cask clicker-remote-receiver
 
 Download from [GitHub Releases](https://github.com/douinc/clicker/releases), open the DMG, and drag to Applications.
 
-> **First launch:** Grant Accessibility permission when prompted (System Settings → Privacy & Security → Accessibility)
+> **First launch:** Grant Accessibility permission when prompted (System Settings → Privacy & Security → Accessibility), then restart the app via **Debug → Restart App** in the menu bar
 
 ### Step 2: Install iPhone App
 
@@ -141,7 +141,7 @@ See our [Privacy Policy](PRIVACY_POLICY.md).
 | Issue | Solution |
 |-------|----------|
 | Mac not appearing | Ensure both devices are on the same WiFi network |
-| Keystrokes not working | Grant Accessibility in System Settings → Privacy & Security |
+| Keystrokes not working | Grant Accessibility in System Settings → Privacy & Security, then restart via Debug → Restart App |
 | Connection drops | Check that no firewall/VPN blocks local network |
 
 ---
