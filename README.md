@@ -119,6 +119,7 @@ Download **ClickerRemote** from the [App Store](https://apps.apple.com/app/click
 3. **Open the iPhone app** → It auto-discovers your Mac
 4. **Tap to connect** → Select your Mac from the list
 5. **Present!** → Tap the arrows to navigate slides
+6. If iPhone cannot connect to your Mac, Check Airplay and Connectivity in Settings. Make sure to set Airplay Automatically to "Automatic".
 
 ---
 
