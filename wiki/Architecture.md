@@ -1,12 +1,18 @@
 # Architecture
 
-ClickerRemote uses a peer-to-peer architecture over Apple's MultipeerConnectivity framework.
+ClickerRemote uses a peer-to-peer architecture over Apple's MultipeerConnectivity framework, with Apple Watch support via WatchConnectivity.
 
 ## System Overview
 
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
 flowchart TB
+    subgraph Watch["Apple Watch App"]
+        WUI[SwiftUI Views]
+        WCM[WatchConnectionManager]
+        WCS[WCSession]
+    end
+
     subgraph iPhone["iPhone App"]
         UI[SwiftUI Views]
         ICM[iPhoneConnectionManager]
@@ -27,6 +33,9 @@ flowchart TB
         Keynote[Keynote / PowerPoint / etc.]
     end
 
+    WUI --> WCM
+    WCM --> WCS
+    WCS <-->|WatchConnectivity| ICM
     UI --> ICM
     UI --> Timer
     UI --> Sub
@@ -146,6 +155,57 @@ func sendKeystroke(_ keyCode: UInt16) {
 |---------|----------|-----|
 | Next | 125 | ↓ (Down Arrow) |
 | Previous | 126 | ↑ (Up Arrow) |
+
+## Apple Watch Architecture
+
+### Communication Model
+
+The Watch app communicates with the Mac **through the iPhone** as a relay:
+
+```
+Watch → (WatchConnectivity) → iPhone → (MultipeerConnectivity) → Mac
+```
+
+### WatchConnectivity
+
+The Watch uses `WCSession.sendMessage` for real-time command relay:
+
+```swift
+// Watch sends command to iPhone
+session.sendMessage(["command": "next"], replyHandler: { reply in
+    // iPhone replies with Mac connection status
+    if let connected = reply["connectedToMac"] as? Bool {
+        self.isConnectedToMac = connected
+    }
+})
+```
+
+The iPhone relays commands to the Mac and sends connection status back to the Watch via `updateApplicationContext`.
+
+### Always-On Display
+
+When connected, the iPhone disables the idle timer to prevent the screen from locking:
+
+```swift
+// RemoteControlView
+.onAppear {
+    UIApplication.shared.isIdleTimerDisabled = true
+}
+.onDisappear {
+    UIApplication.shared.isIdleTimerDisabled = false
+}
+```
+
+This keeps the MultipeerConnectivity session alive, which in turn keeps the Watch connected. Without this, iOS suspends the app on screen lock and the MC session drops.
+
+### Watch Timer
+
+The Watch has its own independent presentation timer with:
+
+- **Tap** to start/stop
+- **Long press** to reset (with haptic feedback via `WKInterfaceDevice.current().play(.notification)`)
+
+---
 
 ## iPhone App Architecture
 

@@ -201,12 +201,52 @@ class TrialTracker {
 
 ---
 
+## Watch App
+
+### WatchConnectionManager
+
+Handles WatchConnectivity communication with the iPhone.
+
+```swift
+class WatchConnectionManager: NSObject, ObservableObject {
+    @Published var isReachable: Bool
+    @Published var isConnectedToMac: Bool
+
+    func sendCommand(_ command: String)
+    func nextSlide()
+    func previousSlide()
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `isReachable` | `Bool` | True when iPhone is reachable |
+| `isConnectedToMac` | `Bool` | True when iPhone is connected to Mac |
+
+**Protocols Implemented**:
+- `WCSessionDelegate`
+
+**Retry Logic**: Commands are retried up to 3 times at 0.5s intervals if the iPhone is temporarily unreachable.
+
+### Watch SwiftUI Views
+
+| View | Description |
+|------|-------------|
+| `ContentView` | Previous/next buttons + timer display |
+
+**Timer Gestures**:
+- **Tap**: Start/stop timer
+- **Long press**: Reset timer to 00:00 with haptic feedback
+
+---
+
 ## Bundle Identifiers
 
 | App | Bundle ID |
 |-----|-----------|
 | ClickerRemoteReceiver (Mac) | `com.dou.clicker-mac` |
 | ClickerRemote (iOS) | `com.dou.clicker-ios` |
+| ClickerWatch (watchOS) | `com.dou.clicker-ios.watchkitapp` |
 
 ## StoreKit Product IDs
 

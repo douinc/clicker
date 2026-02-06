@@ -24,26 +24,27 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
 
-                // Timer display (middle)
-                Button(action: {
-                    toggleTimer()
-                }) {
-                    VStack(spacing: 2) {
-                        Text(formattedTime)
-                            .font(.system(size: 24, weight: .medium, design: .monospaced))
-                            .foregroundColor(timerRunning ? .green : .white)
+                // Timer display (middle) — tap to start/stop, long press to reset
+                VStack(spacing: 2) {
+                    Text(formattedTime)
+                        .font(.system(size: 24, weight: .medium, design: .monospaced))
+                        .foregroundColor(timerRunning ? .green : .white)
 
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(connectionManager.isConnectedToMac ? Color.green : Color.red)
-                                .frame(width: 6, height: 6)
-                            Text(connectionManager.isConnectedToMac ? "Connected" : "Disconnected")
-                                .font(.system(size: 10))
-                                .foregroundColor(.secondary)
-                        }
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(connectionManager.isConnectedToMac ? Color.green : Color.red)
+                            .frame(width: 6, height: 6)
+                        Text(connectionManager.isConnectedToMac ? "Connected" : "Disconnected")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
                     }
                 }
-                .buttonStyle(.plain)
+                .onTapGesture {
+                    toggleTimer()
+                }
+                .onLongPressGesture {
+                    resetTimer()
+                }
 
                 // Next slide button (bottom)
                 Button(action: {
@@ -69,6 +70,14 @@ struct ContentView: View {
         let minutes = elapsedSeconds / 60
         let seconds = elapsedSeconds % 60
         return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private func resetTimer() {
+        timer?.invalidate()
+        timer = nil
+        timerRunning = false
+        elapsedSeconds = 0
+        WKInterfaceDevice.current().play(.notification)
     }
 
     private func toggleTimer() {

@@ -134,6 +134,35 @@ info:
 
 Keys must be in `info.properties`, not just the source Info.plist files.
 
+## Apple Watch Issues
+
+### Watch Not Connecting
+
+**Symptoms**: Watch app shows "Disconnected", commands don't work
+
+**Solutions**:
+
+1. **iPhone app must be running**: The Watch connects through the iPhone, not directly to the Mac
+2. **Check iPhone connection**: The iPhone must be connected to the Mac first
+3. **Relaunch Watch app**: Force-quit and reopen on the Watch
+4. **Check WCSession**: Ensure the Watch is paired and the Watch app is installed
+
+### Watch Commands Not Reaching Mac
+
+**Symptoms**: Watch shows "Connected" but slides don't change
+
+**Solutions**:
+
+1. **iPhone screen locked**: The iPhone disables auto-lock while connected, but if you manually lock it, the MultipeerConnectivity session drops. Unlock the iPhone to restore the connection
+2. **iPhone app in background**: Bring the ClickerRemote app to the foreground on the iPhone
+3. **Retry mechanism**: The Watch retries commands up to 3 times — wait a moment and try again
+
+### Watch Timer Reset Not Working
+
+**Solution**: Long press (not tap) the timer display. You should feel a strong haptic pulse confirming the reset.
+
+---
+
 ## SwiftUI Issues
 
 ### Section Syntax Error

@@ -56,6 +56,9 @@ ClickerRemote turns your iPhone into a wireless presentation remote. It works wi
 
 ```mermaid
 graph LR
+    subgraph Watch
+        W[ClickerWatch App]
+    end
     subgraph iPhone
         A[ClickerRemote App]
     end
@@ -66,6 +69,7 @@ graph LR
         C[Keynote / PowerPoint /<br/>Google Slides / Figma]
     end
 
+    W -->|WatchConnectivity| A
     A -->|WiFi / Bluetooth| B
     B -->|Keystrokes| C
 ```
@@ -104,7 +108,9 @@ Download **ClickerRemote** from the [App Store](https://apps.apple.com/app/click
 | Feature | Description |
 |---------|-------------|
 | **Large Touch Targets** | Easy-to-hit buttons designed for stage use |
+| **Apple Watch** | Control slides and track time right from your wrist |
 | **Presentation Timer** | Track time with haptic alerts at custom intervals |
+| **Always-On Display** | Screen stays on while presenting — no connection drops |
 | **Dark Mode** | Stage-friendly liquid glass aesthetic |
 | **Visual Progress** | Color-coded timer bar (green → yellow → orange → red) |
 | **Duration Presets** | 5, 10, 15, 20, 30 minutes or unlimited |

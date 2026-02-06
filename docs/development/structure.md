@@ -13,6 +13,11 @@ clicker/
 │   ├── KeystrokeSender.swift
 │   ├── Info.plist
 │   └── ClickerMac.entitlements
+├── WatchApp/                # watchOS companion app
+│   ├── ClickerWatchApp.swift
+│   ├── ContentView.swift
+│   ├── WatchConnectionManager.swift
+│   └── Info.plist
 ├── iPhoneApp/               # iOS remote control app
 │   ├── PresentationRemoteiPhoneApp.swift
 │   ├── iPhoneConnectionManager.swift
@@ -36,7 +41,7 @@ clicker/
 
 The single source of truth for build configuration. Defines:
 
-- Both targets (ClickerMac, ClickeriOS)
+- All three targets (ClickerMac, ClickeriOS, ClickerWatch)
 - Build settings and signing
 - Info.plist properties
 - Capabilities and entitlements
@@ -140,12 +145,37 @@ Presentation timer with haptic feedback:
 
 ---
 
+## Watch App Files
+
+### `ClickerWatchApp.swift`
+
+App entry point for the watchOS companion.
+
+### `ContentView.swift`
+
+Main watch interface with:
+
+- Previous/next slide buttons
+- Presentation timer (tap to start/stop, long press to reset)
+- Connection status indicator
+
+### `WatchConnectionManager.swift`
+
+Handles WatchConnectivity with the iPhone:
+
+- Sends slide commands via `WCSession.sendMessage`
+- Receives Mac connection status via `applicationContext`
+- Retries failed commands up to 3 times
+
+---
+
 ## Bundle Identifiers
 
 | Target | Bundle ID |
 |--------|-----------|
 | Mac App | `com.dou.clicker-mac` |
 | iOS App | `com.dou.clicker-ios` |
+| Watch App | `com.dou.clicker-ios.watchkitapp` |
 
 ---
 

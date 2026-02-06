@@ -15,14 +15,18 @@ Welcome to the ClickerRemote developer documentation. This wiki contains technic
 
 ## Project Overview
 
-ClickerRemote is a presentation remote system consisting of two apps:
+ClickerRemote is a presentation remote system consisting of three apps:
 
 - **ClickerRemote** (iOS) — Remote control app for iPhone
 - **ClickerRemoteReceiver** (macOS) — Menu bar app that receives commands
+- **ClickerWatch** (watchOS) — Apple Watch companion for wrist-based control
 
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
 graph LR
+    subgraph Watch
+        W[ClickerWatch]
+    end
     subgraph iPhone
         A[ClickerRemote]
     end
@@ -33,6 +37,7 @@ graph LR
         C[Keynote / PowerPoint / Slides]
     end
 
+    W -->|WatchConnectivity| A
     A -->|MultipeerConnectivity| B
     B -->|CGEvent Keystrokes| C
 
@@ -45,10 +50,11 @@ graph LR
 |-----------|------------|
 | Language | Swift 5.9 |
 | UI Framework | SwiftUI |
-| Networking | MultipeerConnectivity |
+| Networking | MultipeerConnectivity, WatchConnectivity |
 | Build System | XcodeGen + xcodebuild |
 | macOS Target | 14.0+ (Sonoma) |
 | iOS Target | 18.0+ |
+| watchOS Target | 10.0+ |
 
 ## Repository Structure
 
@@ -60,6 +66,7 @@ clicker/
 │   └── RemoteCommand.swift
 ├── MacApp/              # macOS menu bar app
 ├── iPhoneApp/           # iOS remote control app
+├── WatchApp/            # watchOS companion app
 ├── docs/                # MkDocs documentation
 ├── wiki/                # GitHub Wiki source
 └── Casks/               # Homebrew cask formula
@@ -72,6 +79,7 @@ clicker/
 | ClickerRemoteReceiver | GitHub Releases (DMG) | [Releases](https://github.com/douinc/clicker/releases) |
 | ClickerRemoteReceiver | Homebrew Cask | `brew tap douinc/clicker && brew install --cask clicker-remote-receiver` |
 | ClickerRemote | App Store | [Coming Soon](https://apps.apple.com) |
+| ClickerWatch | Bundled with iOS app | Installs automatically via Watch app |
 
 ## License
 

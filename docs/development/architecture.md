@@ -2,13 +2,20 @@
 
 ## System Overview
 
-Clicker uses a client-server model over Apple's MultipeerConnectivity framework:
+Clicker uses a client-server model over Apple's MultipeerConnectivity framework, with Apple Watch support via WatchConnectivity:
 
 - **Mac (Server)**: Advertises presence, accepts connections, executes keystrokes
 - **iPhone (Client)**: Browses for servers, initiates connections, sends commands
+- **Watch (Companion)**: Sends commands to iPhone via WatchConnectivity, which relays to Mac
 
 ```mermaid
 flowchart TB
+    subgraph Watch["Apple Watch App"]
+        WUI[SwiftUI Views]
+        WCM[WatchConnectionManager]
+        WCS[WCSession]
+    end
+
     subgraph iPhone["iPhone App"]
         UI[SwiftUI Views]
         ICM[iPhoneConnectionManager]
@@ -29,6 +36,9 @@ flowchart TB
         Keynote[Keynote / PowerPoint / etc.]
     end
 
+    WUI --> WCM
+    WCM --> WCS
+    WCS <-->|WatchConnectivity| ICM
     UI --> ICM
     UI --> Timer
     UI --> Sub
@@ -138,6 +148,31 @@ func sendKeystroke(_ keyCode: UInt16) {
 
 !!! warning "Accessibility Permission"
     `CGEvent` posting requires the app to be granted Accessibility permission in System Settings.
+
+---
+
+## Apple Watch Architecture
+
+The Watch app acts as a lightweight remote that relays commands through the iPhone.
+
+### Communication Chain
+
+```
+Watch → (WCSession.sendMessage) → iPhone → (MCSession.send) → Mac
+```
+
+The Watch never connects directly to the Mac. The iPhone acts as a bridge.
+
+### Always-On Display
+
+When connected to a Mac, the iPhone disables the idle timer (`UIApplication.shared.isIdleTimerDisabled = true`). This prevents the screen from locking, which would suspend the app and drop the MultipeerConnectivity session. Auto-lock resumes when you disconnect.
+
+### Watch Timer
+
+The Watch has its own independent timer:
+
+- **Tap** the timer to start/stop
+- **Long press** the timer to reset (with `.notification` haptic feedback)
 
 ---
 
