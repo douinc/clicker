@@ -44,7 +44,7 @@ The Mac app runs in your menu bar and receives commands from the iPhone app. It 
 
 The iPhone app provides the remote control interface with large navigation buttons and a presentation timer with haptic feedback.
 
-[Download from App Store :material-apple:](https://apps.apple.com/app/clicker){ .md-button .md-button--primary }
+[App Store — Coming Soon :material-apple:](#){ .md-button disabled style="pointer-events:none;opacity:0.5" }
 
 !!! info "Subscription"
     The iPhone app includes a 7-day free trial, then $4.99/year.

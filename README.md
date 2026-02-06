@@ -41,6 +41,27 @@
 
 ---
 
+### Apple Watch
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="public/screenshot/watch/1-disconnected.png" alt="Watch Disconnected" height="200">
+      <br><sub>Disconnected</sub>
+    </td>
+    <td align="center">
+      <img src="public/screenshot/watch/2-connected.png" alt="Watch Connected" height="200">
+      <br><sub>Connected</sub>
+    </td>
+    <td align="center">
+      <img src="public/screenshot/watch/3-timer.png" alt="Watch Timer" height="200">
+      <br><sub>Timer</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Why ClickerRemote?
 
 Carrying a $30–$100 clicker alongside your $1000 iPhone and $2000 Mac seems excessive.
