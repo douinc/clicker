@@ -69,6 +69,14 @@ install-ios: build-ios
 run-ios: install-ios
     xcrun devicectl device process launch --device {{ env("DEVICECTL_ID", "") }} com.dou.clicker-ios
 
+# Build and deploy iPhone + Watch apps to physical devices
+deploy: build-ios
+    @echo "📱 Installing iPhone + Watch apps on device..."
+    xcrun devicectl device install app --device {{ env("DEVICECTL_ID", "") }} "{{ ios_app }}"
+    @echo ""
+    @echo "✅ Deployed! Watch app will sync to your paired Apple Watch automatically."
+    @echo "   If it doesn't appear, open the Watch app on iPhone → My Watch → Installed Apps"
+
 # Uninstall iOS app from device (removes app + all data)
 uninstall-ios:
     @if [ -z "${DEVICECTL_ID:-}" ]; then \
