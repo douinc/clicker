@@ -150,6 +150,7 @@ schemes:
         ClickerWatch: all
     run:
       config: Debug
+      executable: ClickeriOS
       storeKitConfiguration: iPhoneApp/Products.storekit
     archive:
       config: Release
