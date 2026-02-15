@@ -20,6 +20,10 @@
 	<string>1</string>
 	<key>WKApplication</key>
 	<true/>
+	<key>WKBackgroundModes</key>
+	<array>
+		<string>self-care</string>
+	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.dou.clicker-ios</string>
 </dict>

@@ -13,6 +13,7 @@ let subscriptionGroupID = "21901349"
 final class SubscriptionManager {
     private(set) var products: [Product] = []
     private(set) var status: AppSubscriptionStatus = .notDetermined
+    private(set) var productLoadFailed = false
 
     private var transactionListener: Task<Void, Never>?
     private let trialTracker = TrialTracker()
@@ -25,8 +26,9 @@ final class SubscriptionManager {
         transactionListener = listenForTransactions()
 
         Task {
-            await loadProducts()
-            await updateSubscriptionStatus()
+            async let products: Void = loadProducts()
+            async let status: Void = updateSubscriptionStatus()
+            _ = await (products, status)
         }
         #endif
     }
@@ -56,10 +58,16 @@ final class SubscriptionManager {
 
     /// Load available products from App Store
     func loadProducts() async {
+        productLoadFailed = false
         do {
             products = try await Product.products(for: [subscriptionProductID])
+            if products.isEmpty {
+                print("No products found for ID: \(subscriptionProductID)")
+                productLoadFailed = true
+            }
         } catch {
             print("Failed to load products: \(error)")
+            productLoadFailed = true
         }
     }
 

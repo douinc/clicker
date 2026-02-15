@@ -44,6 +44,20 @@ struct PaywallView: View {
                 // Pricing section — billed amount is largest and most prominent
                 if let product = subscriptionManager.yearlyProduct {
                     PricingSection(product: product)
+                } else if subscriptionManager.productLoadFailed {
+                    VStack(spacing: 12) {
+                        Text("Unable to load pricing")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Task {
+                                await subscriptionManager.loadProducts()
+                            }
+                        }
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.blue)
+                    }
+                    .padding()
                 } else {
                     ProgressView("Loading...")
                         .padding()
