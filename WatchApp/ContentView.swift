@@ -3,6 +3,7 @@ import WatchKit
 
 struct ContentView: View {
     @EnvironmentObject var connectionManager: WatchConnectionManager
+    @EnvironmentObject var gestureManager: GestureManager
     @Environment(\.isLuminanceReduced) var isLuminanceReduced
     @State private var timerStartDate: Date?
     @State private var accumulatedTime: TimeInterval = 0
@@ -31,19 +32,35 @@ struct ContentView: View {
                         WKInterfaceDevice.current().play(.click)
                         connectionManager.previousSlide()
                     }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 32, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: geometry.size.height * 0.35)
-                            .background(Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        ZStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 32, weight: .bold))
+
+                            // Gesture feedback overlay
+                            if gestureManager.lastGesture == .previous {
+                                Image(systemName: "hand.wave.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.yellow)
+                                    .offset(x: 40, y: -10)
+                                    .transition(.opacity)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: geometry.size.height * 0.30)
+                        .background(
+                            gestureManager.lastGesture == .previous
+                                ? Color.yellow.opacity(0.3)
+                                : Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .animation(.easeOut(duration: 0.2), value: gestureManager.lastGesture)
                     }
                     .buttonStyle(.plain)
 
                     // Timer display (middle) — tap to start/stop, long press to reset
                     VStack(spacing: 2) {
                         Text(formattedTime(at: context.date))
-                            .font(.system(size: 24, weight: .medium, design: .monospaced))
+                            .font(.system(size: 22, weight: .medium, design: .monospaced))
                             .foregroundColor(timerRunning ? .green : .white)
 
                         HStack(spacing: 4) {
@@ -68,12 +85,51 @@ struct ContentView: View {
                         WKInterfaceDevice.current().play(.click)
                         connectionManager.nextSlide()
                     }) {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 32, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: geometry.size.height * 0.35)
-                            .background(Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        ZStack {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 32, weight: .bold))
+
+                            // Gesture feedback overlay
+                            if gestureManager.lastGesture == .next {
+                                Image(systemName: "hand.wave.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.yellow)
+                                    .offset(x: 40, y: -10)
+                                    .transition(.opacity)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: geometry.size.height * 0.30)
+                        .background(
+                            gestureManager.lastGesture == .next
+                                ? Color.yellow.opacity(0.3)
+                                : Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .animation(.easeOut(duration: 0.2), value: gestureManager.lastGesture)
+                    }
+                    .buttonStyle(.plain)
+
+                    // Gesture control toggle
+                    Button(action: {
+                        gestureManager.toggle()
+                        WKInterfaceDevice.current().play(.click)
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
+                                .font(.system(size: 12))
+                            Text(gestureManager.isEnabled ? "Gestures On" : "Gestures Off")
+                                .font(.system(size: 11))
+                        }
+                        .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                        .background(
+                            gestureManager.isEnabled
+                                ? Color.yellow.opacity(0.15)
+                                : Color.clear
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     .buttonStyle(.plain)
                 }
@@ -108,4 +164,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(WatchConnectionManager())
+        .environmentObject(GestureManager())
 }

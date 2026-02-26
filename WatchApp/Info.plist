@@ -26,5 +26,7 @@
 	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.dou.clicker-ios</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations.</string>
 </dict>
 </plist>

@@ -124,6 +124,9 @@ targets:
         WKCompanionAppBundleIdentifier: com.dou.clicker-ios
         WKBackgroundModes:
           - self-care
+        NSMotionUsageDescription: "Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
+    dependencies:
+      - sdk: CoreMotion.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
