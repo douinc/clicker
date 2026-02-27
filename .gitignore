@@ -16,3 +16,4 @@ build
 iPhoneApp/ClickerRemote.storekit
 .omc
 WatchApp/Info.plist
+.claude
