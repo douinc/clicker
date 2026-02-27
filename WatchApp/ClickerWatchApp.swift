@@ -1,10 +1,12 @@
 import SwiftUI
+import HealthKit
 
 @main
 struct ClickerWatchApp: App {
     @StateObject private var connectionManager = WatchConnectionManager()
     @StateObject private var sessionManager = ExtendedSessionManager()
     @StateObject private var gestureManager = GestureManager()
+    @StateObject private var workoutManager = WorkoutManager()
     @Environment(\.scenePhase) var scenePhase
 
     var body: some Scene {
@@ -13,15 +15,22 @@ struct ClickerWatchApp: App {
                 .environmentObject(connectionManager)
                 .environmentObject(sessionManager)
                 .environmentObject(gestureManager)
+                .environmentObject(workoutManager)
                 .onAppear {
                     wireGestureCallbacks()
+                    workoutManager.start()
                 }
                 .onChange(of: scenePhase) { _, phase in
                     switch phase {
                     case .active:
                         sessionManager.start()
-                    case .inactive, .background:
-                        gestureManager.stop()
+                        workoutManager.start()
+                    case .inactive:
+                        // Screen dimmed (AOD) — don't change anything
+                        break
+                    case .background:
+                        // User explicitly navigated away — stop workout to save battery
+                        workoutManager.stop()
                     @unknown default:
                         break
                     }

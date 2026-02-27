@@ -125,8 +125,14 @@ targets:
         WKBackgroundModes:
           - self-care
         NSMotionUsageDescription: "Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
+        NSHealthUpdateUsageDescription: "Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible for reliable gesture control."
+    entitlements:
+      path: WatchApp/ClickerWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
     dependencies:
       - sdk: CoreMotion.framework
+      - sdk: HealthKit.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
