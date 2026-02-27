@@ -34,12 +34,27 @@ Download Clicker from the [App Store](https://apps.apple.com/app/clicker).
     - **Subscription**: $4.99/year after trial
     - **Restore**: If you've subscribed before, tap "Restore Purchases"
 
+## Apple Watch App
+
+The Apple Watch app is installed automatically when you install the iPhone app. Make sure your Watch is paired with your iPhone.
+
+The Watch app supports:
+
+- Tap buttons for slide navigation
+- Hands-free wrist gesture control (flick forward/back)
+- Independent presentation timer
+- Haptic feedback on every action
+
+!!! tip "Gesture Control"
+    Tap the hand wave icon on the Watch to enable wrist gestures. Flick your wrist forward for next slide, backward for previous. A double haptic pulse confirms each gesture.
+
 ## System Requirements
 
 | Platform | Minimum Version |
 |----------|-----------------|
 | macOS | 14.0 (Sonoma) |
 | iOS | 18.0 |
+| watchOS | 10.0 |
 
 ## Network Requirements
 

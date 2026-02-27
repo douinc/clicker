@@ -16,7 +16,11 @@ clicker/
 ├── WatchApp/                # watchOS companion app
 │   ├── ClickerWatchApp.swift
 │   ├── ContentView.swift
+│   ├── GestureManager.swift
+│   ├── WorkoutManager.swift
+│   ├── ExtendedSessionManager.swift
 │   ├── WatchConnectionManager.swift
+│   ├── ClickerWatch.entitlements
 │   └── Info.plist
 ├── iPhoneApp/               # iOS remote control app
 │   ├── PresentationRemoteiPhoneApp.swift
@@ -149,15 +153,45 @@ Presentation timer with haptic feedback:
 
 ### `ClickerWatchApp.swift`
 
-App entry point for the watchOS companion.
+App entry point for the watchOS companion. Initializes state managers for connection, gestures, workouts, and extended runtime.
 
 ### `ContentView.swift`
 
 Main watch interface with:
 
-- Previous/next slide buttons
+- Previous/next slide buttons (30% height each for easy tapping)
+- Gesture toggle button with visual indicator (yellow hand wave icon)
 - Presentation timer (tap to start/stop, long press to reset)
 - Connection status indicator
+- Always-on display support with luminance reduction
+- Hardware double-tap gesture shortcut (watchOS 11+)
+
+### `GestureManager.swift`
+
+CoreMotion-based wrist gesture detection for hands-free slide control:
+
+- Uses gyroscope rotation rate around x-axis (wrist flexion/extension)
+- Flick forward (positive x rotation) = next slide
+- Flick backward (negative x rotation) = previous slide
+- Rotation threshold: 3.0 rad/s to prevent false positives
+- Cooldown: 0.8 seconds between triggers
+- Motion updates at 50 Hz
+- Double haptic pulse confirmation (directionUp/directionDown)
+
+### `WorkoutManager.swift`
+
+HealthKit workout session management to keep the app active:
+
+- Starts an `HKWorkoutSession` to prevent watchOS from dismissing the app on wrist-down
+- Maintains reliable gesture control throughout presentations
+- Gracefully handles session expiration with auto-restart
+
+### `ExtendedSessionManager.swift`
+
+Extended runtime session handling:
+
+- Uses `WKExtendedRuntimeSession` to extend app runtime beyond default limits
+- Handles expiration and automatic restart
 
 ### `WatchConnectionManager.swift`
 
@@ -165,7 +199,7 @@ Handles WatchConnectivity with the iPhone:
 
 - Sends slide commands via `WCSession.sendMessage`
 - Receives Mac connection status via `applicationContext`
-- Retries failed commands up to 3 times
+- Retries failed commands up to 3 times (0.5s intervals)
 
 ---
 

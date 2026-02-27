@@ -6,6 +6,9 @@ Clicker is a presentation remote that turns your iPhone into a wireless clicker 
 
 ```mermaid
 graph LR
+    subgraph Watch
+        W[ClickerWatch App]
+    end
     subgraph iPhone
         A[Clicker App]
     end
@@ -16,6 +19,7 @@ graph LR
         C[Keynote / PowerPoint / Slides]
     end
 
+    W -->|WatchConnectivity| A
     A -->|WiFi / Bluetooth| B
     B -->|Keystrokes| C
 ```
@@ -26,7 +30,9 @@ graph LR
 |---------|-------------|
 | **Wireless Control** | Navigate slides with large, easy-to-hit touch targets |
 | **Peer-to-Peer** | Direct connection via MultipeerConnectivity (WiFi or Bluetooth) |
-| **Presentation Timer** | Track time with configurable haptic alerts |
+| **Apple Watch** | Control slides with tap buttons or hands-free wrist gestures |
+| **Wrist Gestures** | Flick forward/back to navigate slides with haptic confirmation |
+| **Presentation Timer** | Track time with configurable haptic alerts (iPhone and Watch) |
 | **Works Offline** | No internet connection needed |
 | **Dark Mode** | Stage-friendly interface with liquid glass aesthetic |
 | **Universal** | Works with any app that uses arrow keys |

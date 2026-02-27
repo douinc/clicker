@@ -6,7 +6,7 @@ Clicker uses a client-server model over Apple's MultipeerConnectivity framework,
 
 - **Mac (Server)**: Advertises presence, accepts connections, executes keystrokes
 - **iPhone (Client)**: Browses for servers, initiates connections, sends commands
-- **Watch (Companion)**: Sends commands to iPhone via WatchConnectivity, which relays to Mac
+- **Watch (Companion)**: Sends commands to iPhone via WatchConnectivity, which relays to Mac. Supports hands-free wrist gesture control via CoreMotion
 
 ```mermaid
 flowchart TB
@@ -14,6 +14,8 @@ flowchart TB
         WUI[SwiftUI Views]
         WCM[WatchConnectionManager]
         WCS[WCSession]
+        GM[GestureManager]
+        WM[WorkoutManager]
     end
 
     subgraph iPhone["iPhone App"]
@@ -37,6 +39,9 @@ flowchart TB
     end
 
     WUI --> WCM
+    WUI --> GM
+    WUI --> WM
+    GM -->|gesture detected| WCM
     WCM --> WCS
     WCS <-->|WatchConnectivity| ICM
     UI --> ICM
@@ -153,7 +158,7 @@ func sendKeystroke(_ keyCode: UInt16) {
 
 ## Apple Watch Architecture
 
-The Watch app acts as a lightweight remote that relays commands through the iPhone.
+The Watch app acts as a lightweight remote that relays commands through the iPhone, with support for hands-free gesture control.
 
 ### Communication Chain
 
@@ -163,9 +168,31 @@ Watch → (WCSession.sendMessage) → iPhone → (MCSession.send) → Mac
 
 The Watch never connects directly to the Mac. The iPhone acts as a bridge.
 
+### Wrist Gesture Control
+
+The `GestureManager` uses CoreMotion to detect wrist flick gestures for hands-free slide navigation:
+
+- **Flick forward** (wrist away from body) → Next slide
+- **Flick backward** (wrist toward body) → Previous slide
+- Uses gyroscope rotation rate around the x-axis (wrist flexion/extension)
+- Threshold: 3.0 rad/s to filter out incidental motion
+- Cooldown: 0.8 seconds between triggers to prevent double-fires
+- Motion updates sampled at 50 Hz
+- Double haptic pulse (directionUp/directionDown) confirms each gesture
+- Toggle on/off via the hand wave button or hardware double-tap (watchOS 11+)
+
+### Workout Session (Stay Active)
+
+The `WorkoutManager` uses `HKWorkoutSession` to keep the Watch app visible and active during presentations. Without this, watchOS would dismiss the app when the user lowers their wrist, breaking gesture detection. The workout session auto-restarts on expiration.
+
+!!! note "HealthKit Usage"
+    Clicker does not read or store any health data. HealthKit is used solely to maintain an active workout session that prevents the system from suspending the app.
+
 ### Always-On Display
 
 When connected to a Mac, the iPhone disables the idle timer (`UIApplication.shared.isIdleTimerDisabled = true`). This prevents the screen from locking, which would suspend the app and drop the MultipeerConnectivity session. Auto-lock resumes when you disconnect.
+
+The Watch UI detects `isLuminanceReduced` to adjust opacity in always-on display mode.
 
 ### Watch Timer
 
@@ -173,6 +200,7 @@ The Watch has its own independent timer:
 
 - **Tap** the timer to start/stop
 - **Long press** the timer to reset (with `.notification` haptic feedback)
+- Monospaced display with color coding (green when running, white when stopped)
 
 ---
 

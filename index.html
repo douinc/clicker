@@ -34,6 +34,9 @@
         .prompt { color: #00cc33; } .command { color: #fff; }
         .cursor { display: inline-block; width: 10px; height: 20px; background: var(--dot-color); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 5px; }
         @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+        .demo { text-align: center; margin: 50px 0; }
+        .demo h2 { font-family: 'Press Start 2P', cursive; font-size: 1rem; margin-bottom: 30px; text-shadow: var(--text-glow); }
+        .demo video { max-width: 100%; width: 600px; border: 2px solid var(--dot-color); box-shadow: 0 0 20px rgba(0, 255, 65, 0.3); border-radius: 5px; }
         .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 50px 0; }
         .feature { background: rgba(0, 20, 0, 0.6); border: 1px solid var(--dot-dim); padding: 25px; text-align: center; transition: all 0.3s ease; }
         .feature:hover { border-color: var(--dot-color); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); transform: translateY(-5px); }
@@ -84,6 +87,11 @@
             </div>
         </div>
         
+        <div class="demo">
+            <h2>[ DEMO ]</h2>
+            <video src="public/demo.MP4" controls playsinline muted></video>
+        </div>
+
         <div class="features">
             <div class="feature">
                 <span class="feature-icon">📱</span>
@@ -93,7 +101,7 @@
             <div class="feature">
                 <span class="feature-icon">⌚</span>
                 <h3>APPLE WATCH</h3>
-                <p>Control slides and track time right from your wrist.</p>
+                <p>Control slides with tap buttons or hands-free wrist gestures. Haptic confirmation on every action.</p>
             </div>
             <div class="feature">
                 <span class="feature-icon">🔒</span>
