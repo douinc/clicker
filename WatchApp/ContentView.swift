@@ -58,22 +58,25 @@ struct ContentView: View {
 
                     // Timer + gesture toggle row
                     HStack(spacing: 4) {
-                        // Gesture toggle — double tap to toggle
-                        Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
-                            .frame(width: 30, height: 30)
-                            .background(
-                                gestureManager.isEnabled
-                                    ? Color.yellow.opacity(0.15)
-                                    : Color.white.opacity(0.08)
-                            )
-                            .clipShape(Circle())
-                            .animation(.easeOut(duration: 0.2), value: gestureManager.isEnabled)
-                            .onTapGesture {
-                                gestureManager.toggle()
-                                WKInterfaceDevice.current().play(.click)
-                            }
+                        // Gesture toggle — tap or hardware double-tap to toggle
+                        Button {
+                            gestureManager.toggle()
+                            WKInterfaceDevice.current().play(.click)
+                        } label: {
+                            Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
+                                .frame(width: 30, height: 30)
+                                .background(
+                                    gestureManager.isEnabled
+                                        ? Color.yellow.opacity(0.15)
+                                        : Color.white.opacity(0.08)
+                                )
+                                .clipShape(Circle())
+                                .animation(.easeOut(duration: 0.2), value: gestureManager.isEnabled)
+                        }
+                        .buttonStyle(.plain)
+                        .modifier(PrimaryGestureShortcut())
 
                         // Timer — tap to start/stop, long press to reset
                         VStack(spacing: 2) {
@@ -153,6 +156,19 @@ struct ContentView: View {
             timerRunning = true
         }
         WKInterfaceDevice.current().play(.click)
+    }
+}
+
+/// Applies `.handGestureShortcut(.primaryAction)` on watchOS 11+, which maps
+/// the hardware double-tap gesture to this button. On watchOS 10 the button
+/// remains tap-only; the modifier is a no-op.
+private struct PrimaryGestureShortcut: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(watchOS 11.0, *) {
+            content.handGestureShortcut(.primaryAction)
+        } else {
+            content
+        }
     }
 }
 
