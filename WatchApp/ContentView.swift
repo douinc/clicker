@@ -26,8 +26,8 @@ struct ContentView: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1.0)) { context in
             GeometryReader { geometry in
-                VStack(spacing: 8) {
-                    // Previous slide button (top)
+                VStack(spacing: 6) {
+                    // Previous slide button
                     Button(action: {
                         WKInterfaceDevice.current().play(.click)
                         connectionManager.previousSlide()
@@ -36,7 +36,6 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 32, weight: .bold))
 
-                            // Gesture feedback overlay
                             if gestureManager.lastGesture == .previous {
                                 Image(systemName: "hand.wave.fill")
                                     .font(.system(size: 16))
@@ -57,30 +56,50 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // Timer display (middle) — tap to start/stop, long press to reset
-                    VStack(spacing: 2) {
-                        Text(formattedTime(at: context.date))
-                            .font(.system(size: 22, weight: .medium, design: .monospaced))
-                            .foregroundColor(timerRunning ? .green : .white)
+                    // Timer + gesture toggle row
+                    HStack(spacing: 4) {
+                        // Gesture toggle — double tap to toggle
+                        Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
+                            .frame(width: 30, height: 30)
+                            .background(
+                                gestureManager.isEnabled
+                                    ? Color.yellow.opacity(0.15)
+                                    : Color.white.opacity(0.08)
+                            )
+                            .clipShape(Circle())
+                            .animation(.easeOut(duration: 0.2), value: gestureManager.isEnabled)
+                            .onTapGesture {
+                                gestureManager.toggle()
+                                WKInterfaceDevice.current().play(.click)
+                            }
 
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(connectionManager.isConnectedToMac ? Color.green : Color.red)
-                                .frame(width: 6, height: 6)
-                            Text(connectionManager.isConnectedToMac ? "Connected" : "Disconnected")
-                                .font(.system(size: 10))
-                                .foregroundColor(.secondary)
+                        // Timer — tap to start/stop, long press to reset
+                        VStack(spacing: 2) {
+                            Text(formattedTime(at: context.date))
+                                .font(.system(size: 22, weight: .medium, design: .monospaced))
+                                .foregroundColor(timerRunning ? .green : .white)
+
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(connectionManager.isConnectedToMac ? Color.green : Color.red)
+                                    .frame(width: 6, height: 6)
+                                Text(connectionManager.isConnectedToMac ? "Connected" : "Disconnected")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .opacity(isLuminanceReduced ? 0.6 : 1.0)
+                        .onTapGesture {
+                            toggleTimer()
+                        }
+                        .onLongPressGesture {
+                            resetTimer()
                         }
                     }
-                    .opacity(isLuminanceReduced ? 0.6 : 1.0)
-                    .onTapGesture {
-                        toggleTimer()
-                    }
-                    .onLongPressGesture {
-                        resetTimer()
-                    }
 
-                    // Next slide button (bottom)
+                    // Next slide button
                     Button(action: {
                         WKInterfaceDevice.current().play(.click)
                         connectionManager.nextSlide()
@@ -89,7 +108,6 @@ struct ContentView: View {
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 32, weight: .bold))
 
-                            // Gesture feedback overlay
                             if gestureManager.lastGesture == .next {
                                 Image(systemName: "hand.wave.fill")
                                     .font(.system(size: 16))
@@ -107,29 +125,6 @@ struct ContentView: View {
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .animation(.easeOut(duration: 0.2), value: gestureManager.lastGesture)
-                    }
-                    .buttonStyle(.plain)
-
-                    // Gesture control toggle
-                    Button(action: {
-                        gestureManager.toggle()
-                        WKInterfaceDevice.current().play(.click)
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
-                                .font(.system(size: 12))
-                            Text(gestureManager.isEnabled ? "Gestures On" : "Gestures Off")
-                                .font(.system(size: 11))
-                        }
-                        .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
-                        .background(
-                            gestureManager.isEnabled
-                                ? Color.yellow.opacity(0.15)
-                                : Color.clear
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     .buttonStyle(.plain)
                 }
