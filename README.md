@@ -54,16 +54,20 @@
 <table align="center">
   <tr>
     <td align="center">
-      <img src="public/screenshot/watch/1-disconnected.png" alt="Watch Disconnected" height="200">
-      <br><sub>Disconnected</sub>
+      <img src="public/screenshot/watch/1-gesture-disabled.PNG" alt="Watch Gesture Disabled" height="200">
+      <br><sub>Gesture Disabled</sub>
     </td>
     <td align="center">
-      <img src="public/screenshot/watch/2-connected.png" alt="Watch Connected" height="200">
-      <br><sub>Connected</sub>
+      <img src="public/screenshot/watch/2-gesture-enabled.PNG" alt="Watch Gesture Enabled" height="200">
+      <br><sub>Gesture Enabled</sub>
     </td>
     <td align="center">
-      <img src="public/screenshot/watch/3-timer.png" alt="Watch Timer" height="200">
-      <br><sub>Timer</sub>
+      <img src="public/screenshot/watch/3-gesture-previous.PNG" alt="Watch Gesture Previous" height="200">
+      <br><sub>Gesture Previous</sub>
+    </td>
+    <td align="center">
+      <img src="public/screenshot/watch/4-gesture-next.PNG" alt="Watch Gesture Next" height="200">
+      <br><sub>Gesture Next</sub>
     </td>
   </tr>
 </table>
