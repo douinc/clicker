@@ -116,12 +116,22 @@ class GestureManager: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.lastGesture = gesture
-            WKInterfaceDevice.current().play(.click)
 
+            // Play strong directional haptic so the user clearly feels the gesture was recognized
+            let device = WKInterfaceDevice.current()
             switch gesture {
             case .next:
+                device.play(.directionUp)
+                // Follow up with a second tap after a short delay for emphasis
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    device.play(.directionUp)
+                }
                 self.onNextSlide?()
             case .previous:
+                device.play(.directionDown)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    device.play(.directionDown)
+                }
                 self.onPreviousSlide?()
             }
 

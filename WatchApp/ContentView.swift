@@ -29,7 +29,7 @@ struct ContentView: View {
                 VStack(spacing: 6) {
                     // Previous slide button
                     Button(action: {
-                        WKInterfaceDevice.current().play(.click)
+                        WKInterfaceDevice.current().play(.directionDown)
                         connectionManager.previousSlide()
                     }) {
                         ZStack {
@@ -61,7 +61,7 @@ struct ContentView: View {
                         // Gesture toggle — tap or hardware double-tap to toggle
                         Button {
                             gestureManager.toggle()
-                            WKInterfaceDevice.current().play(.click)
+                            WKInterfaceDevice.current().play(gestureManager.isEnabled ? .stop : .start)
                         } label: {
                             Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
                                 .font(.system(size: 14, weight: .medium))
@@ -104,7 +104,7 @@ struct ContentView: View {
 
                     // Next slide button
                     Button(action: {
-                        WKInterfaceDevice.current().play(.click)
+                        WKInterfaceDevice.current().play(.directionUp)
                         connectionManager.nextSlide()
                     }) {
                         ZStack {
@@ -151,11 +151,12 @@ struct ContentView: View {
             accumulatedTime = elapsedTime(at: Date())
             timerStartDate = nil
             timerRunning = false
+            WKInterfaceDevice.current().play(.stop)
         } else {
             timerStartDate = Date()
             timerRunning = true
+            WKInterfaceDevice.current().play(.start)
         }
-        WKInterfaceDevice.current().play(.click)
     }
 }
 
