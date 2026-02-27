@@ -44,7 +44,7 @@
 ### Demo
 
 <p align="center">
-  <video src="public/demo.MP4" controls width="600"></video>
+  <video src="https://github.com/user-attachments/assets/12147d35-1fa7-46c0-87b8-37b0d127422b" controls width="600"></video>
 </p>
 
 ---
