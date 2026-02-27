@@ -73,7 +73,7 @@ targets:
         excludes:
           - "*.plist"
           - "*.storekit"
-      - path: iPhoneApp/Products.storekit
+      - path: iPhoneApp/ClickerRemote.storekit
         buildPhase: none
       - path: Shared
     capabilities:
@@ -132,7 +132,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
         PRODUCT_NAME: ClickerWatch
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
-        MARKETING_VERSION: "1.4"
+        MARKETING_VERSION: "1.5"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -158,7 +158,7 @@ schemes:
     run:
       config: Debug
       executable: ClickeriOS
-      storeKitConfiguration: iPhoneApp/Products.storekit
+      storeKitConfiguration: iPhoneApp/ClickerRemote.storekit
     archive:
       config: Release
 
