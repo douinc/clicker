@@ -5,9 +5,13 @@ import Combine
 
 /// Detects wrist flick gestures using CoreMotion for hands-free slide control.
 ///
-/// Gesture mapping:
-/// - Flick wrist forward (away from body) → Next slide
-/// - Flick wrist backward (toward body) → Previous slide
+/// Default gesture mapping:
+/// - Flick wrist forward (clockwise, away from body) → Next slide
+/// - Flick wrist backward (counterclockwise, toward body) → Previous slide
+///
+/// Inverted gesture mapping:
+/// - Counterclockwise → Next slide
+/// - Clockwise → Previous slide
 ///
 /// Uses the gyroscope rotation rate around the x-axis, which corresponds
 /// to wrist flexion/extension — the natural "flick forward" and "pull back" motion.
@@ -17,6 +21,9 @@ class GestureManager: ObservableObject {
 
     @Published var isEnabled = false
     @Published var lastGesture: DetectedGesture?
+    @Published var isInverted: Bool {
+        didSet { UserDefaults.standard.set(isInverted, forKey: "gestureInverted") }
+    }
 
     enum DetectedGesture: Equatable {
         case next
@@ -49,6 +56,7 @@ class GestureManager: ObservableObject {
     // MARK: - Initialization
 
     init() {
+        self.isInverted = UserDefaults.standard.bool(forKey: "gestureInverted")
         motionQueue.name = "com.dou.clicker.gesture"
         motionQueue.maxConcurrentOperationCount = 1
     }
@@ -109,9 +117,10 @@ class GestureManager: ObservableObject {
         guard now.timeIntervalSince(lastTriggerTime) >= cooldownInterval else { return }
         lastTriggerTime = now
 
-        // Positive x rotation = wrist flick forward = next slide
-        // Negative x rotation = wrist flick backward = previous slide
-        let gesture: DetectedGesture = rotationX > 0 ? .next : .previous
+        // Positive x rotation = wrist flick forward, Negative = backward
+        // When inverted: counterclockwise (negative) = next, clockwise (positive) = previous
+        let isInverted = self.isInverted
+        let gesture: DetectedGesture = (rotationX > 0) != isInverted ? .next : .previous
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }

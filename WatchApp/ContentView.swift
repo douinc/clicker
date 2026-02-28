@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var timerStartDate: Date?
     @State private var accumulatedTime: TimeInterval = 0
     @State private var timerRunning = false
+    @State private var showSettings = false
 
     private func elapsedTime(at date: Date) -> TimeInterval {
         if timerRunning, let start = timerStartDate {
@@ -56,7 +57,7 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // Timer + gesture toggle row
+                    // Timer + gesture toggle + settings row
                     HStack(spacing: 4) {
                         // Gesture toggle — tap or hardware double-tap to toggle
                         Button {
@@ -77,6 +78,8 @@ struct ContentView: View {
                         }
                         .buttonStyle(.plain)
                         .modifier(PrimaryGestureShortcut())
+
+                        Spacer()
 
                         // Timer — tap to start/stop, long press to reset
                         VStack(spacing: 2) {
@@ -99,6 +102,27 @@ struct ContentView: View {
                         }
                         .onLongPressGesture {
                             resetTimer()
+                        }
+
+                        Spacer()
+
+                        // Settings button
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .frame(width: 30, height: 30)
+                                .background(Color.white.opacity(0.08))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .sheet(isPresented: $showSettings) {
+                        NavigationStack {
+                            SettingsView()
+                                .environmentObject(gestureManager)
                         }
                     }
 
