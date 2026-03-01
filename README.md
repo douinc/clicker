@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://apps.apple.com/us/app/clickerremote/id6758130180"><img src="https://img.shields.io/badge/App_Store-Download-blue?logo=apple" alt="App Store"></a>
   <a href="https://github.com/douinc/clicker/releases"><img src="https://img.shields.io/badge/Mac-Download_DMG-black?logo=apple" alt="Download DMG"></a>
-  <a href="#"><img src="https://img.shields.io/badge/platform-macOS%2014%2B%20%7C%20iOS%2018%2B-lightgrey" alt="Platform"></a>
+  <a href="#"><img src="https://img.shields.io/badge/platform-macOS%2014%2B%20%7C%20iOS%2018%2B%20%7C%20watchOS%2010%2B-lightgrey" alt="Platform"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
 </p>
 
@@ -103,7 +103,7 @@ graph LR
     end
 
     W -->|WatchConnectivity| A
-    A -->|WiFi / Bluetooth| B
+    A -->|MultipeerConnectivity| B
     B -->|Keystrokes| C
 ```
 
@@ -212,9 +212,11 @@ xcodebuild -scheme ClickerMac -configuration Release build
 ```
 clicker/
 ├── project.yml          # XcodeGen configuration
+├── justfile             # Build automation
 ├── Shared/              # Shared code (RemoteCommand)
 ├── MacApp/              # macOS menu bar app
-└── iPhoneApp/           # iOS remote control app
+├── iPhoneApp/           # iOS remote control app
+└── WatchApp/            # watchOS companion app
 ```
 
 ### Architecture

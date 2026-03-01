@@ -16,21 +16,21 @@ xcodegen generate
 
 ```bash
 # Build
-make build-mac
+just build-mac
 
 # Build and run
-make run-mac
+just run-mac
 ```
 
 ### iOS App (Debug)
 
 ```bash
 # Simulator
-make build-sim
+just build-sim
 
-# Physical device
-make build-ios
-make run-ios DEVICE_ID=<device-id>
+# Physical device (set XCODE_DEVICE_ID and DEVICECTL_ID in .env)
+just build-ios
+just run-ios
 ```
 
 ## Distribution Builds
@@ -41,7 +41,7 @@ The iOS app is distributed via App Store Connect:
 
 ```bash
 # Archive and upload to App Store Connect
-make release-ios
+just release-ios
 ```
 
 This creates an archive and uploads to App Store Connect. Then:
@@ -65,7 +65,7 @@ The Mac app is distributed as a signed and notarized DMG.
 
 3. **Store Notarization Credentials**
    ```bash
-   make setup-notary
+   just setup-notary
    # Enter your Apple ID and app-specific password
    ```
 
@@ -73,10 +73,10 @@ The Mac app is distributed as a signed and notarized DMG.
 
 ```bash
 # Verify signing setup
-make check-signing
+just check-signing
 
 # Full release: build, sign, notarize, create DMG
-make release-mac
+just release-mac
 ```
 
 The pipeline:
@@ -91,12 +91,12 @@ Output: `./build/ClickerRemoteReceiver-{version}.dmg`
 #### Individual Commands
 
 ```bash
-make dmg                    # Create unsigned DMG
-make sign-dmg               # Sign DMG
-make notarize               # Submit for notarization
-make verify-signing         # Verify app signature
-make verify-notarization    # Verify DMG is notarized
-make notary-log             # Show notarization history
+just dmg                    # Create unsigned DMG
+just sign-dmg               # Sign DMG
+just notarize               # Submit for notarization
+just verify-signing         # Verify app signature
+just verify-notarization    # Verify DMG is notarized
+just notary-log             # Show notarization history
 ```
 
 #### Create GitHub Release
@@ -110,22 +110,22 @@ gh release create v1.0 \
 
 ## Homebrew Distribution
 
-The Homebrew cask formula is in `Casks/clicker-remote-receiver.rb`.
+The Homebrew cask is hosted in the [douinc/homebrew-tap](https://github.com/douinc/homebrew-tap) repository.
 
 ### Update Cask for New Release
 
-1. Update `version` in the cask formula
-2. Calculate SHA256 of the new DMG:
-   ```bash
-   shasum -a 256 ./build/ClickerRemoteReceiver-{version}.dmg
-   ```
-3. Update `sha256` in the formula
-4. Commit and push
+After creating a GitHub release, trigger the automated tap update:
+
+```bash
+just update-tap
+```
+
+This triggers a GitHub Action in `douinc/homebrew-tap` that automatically downloads the DMG, calculates SHA256, updates the Cask formula, and pushes.
 
 ### Install from Tap
 
 ```bash
-brew tap douinc/clicker https://github.com/douinc/clicker
+brew tap douinc/tap
 brew install --cask clicker-remote-receiver
 ```
 
@@ -156,29 +156,30 @@ targets:
 | `CODE_SIGN_INJECT_BASE_ENTITLEMENTS` | Prevent debug entitlements |
 | `--timestamp` | Required for notarization verification |
 
-## Makefile Reference
+## justfile Reference
 
 ```bash
-make help                   # Show all commands
+just                        # Show all commands
 
 # Development
-make generate               # Generate Xcode project
-make build-mac              # Build Mac (debug)
-make build-ios              # Build iOS for device
-make build-sim              # Build iOS for simulator
-make run-mac                # Build and run Mac
-make run-ios                # Build, install, launch iOS
+just generate               # Generate Xcode project
+just build-mac              # Build Mac (debug)
+just build-ios              # Build iOS for device
+just build-sim              # Build iOS for simulator
+just run-mac                # Build and run Mac
+just run-ios                # Build, install, launch iOS on device
+just deploy                 # Deploy iPhone + Watch to device
 
 # Mac Distribution
-make check-signing          # Verify Developer ID cert
-make setup-notary           # Store notarization creds
-make release-mac            # Full release pipeline
-make dmg                    # Create DMG only
-make sign-dmg               # Sign DMG
-make notarize               # Notarize DMG
-make verify-signing         # Verify signature
-make verify-notarization    # Verify notarization
+just check-signing          # Verify Developer ID cert
+just setup-notary           # Store notarization creds
+just release-mac            # Full release pipeline
+just dmg                    # Create DMG only
+just sign-dmg               # Sign DMG
+just notarize               # Notarize DMG
+just verify-signing         # Verify signature
+just verify-notarization    # Verify notarization
 
 # iOS Distribution
-make release-ios            # Archive and upload to ASC
+just release-ios            # Archive and upload to ASC
 ```

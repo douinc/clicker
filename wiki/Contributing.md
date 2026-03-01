@@ -33,11 +33,11 @@ git checkout -b fix/bug-description
 
 ```bash
 # Build both apps
-make build-mac
-make build-sim
+just build-mac
+just build-sim
 
 # Run and test manually
-make run-mac
+just run-mac
 ```
 
 ### Commit Guidelines

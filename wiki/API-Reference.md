@@ -11,8 +11,14 @@ The command protocol between iPhone and Mac:
 ```swift
 // Shared/RemoteCommand.swift
 enum RemoteCommand: String, Codable {
-    case next = "next"
-    case previous = "previous"
+    case nextSlide = "next"
+    case previousSlide = "previous"
+    case startPresentation = "start"
+    case endPresentation = "end"
+    case blackScreen = "black"
+    case keepalive = "keepalive"
+
+    var keyCode: UInt16? { ... }
 }
 ```
 
@@ -54,8 +60,11 @@ Injects keyboard events into the system.
 class KeystrokeSender {
     static let shared: KeystrokeSender
 
-    func sendNext()      // Sends Down Arrow (key code 125)
-    func sendPrevious()  // Sends Up Arrow (key code 126)
+    func sendNext()              // Sends Right Arrow (key code 124)
+    func sendPrevious()          // Sends Left Arrow (key code 123)
+    func sendStart()             // Sends Return (key code 36)
+    func sendEnd()               // Sends Escape (key code 53)
+    func sendBlackScreen()       // Sends B key (key code 11)
 }
 ```
 
@@ -65,8 +74,11 @@ class KeystrokeSender {
 
 | Action | Key Code | Key |
 |--------|----------|-----|
-| Next Slide | 125 | ↓ Down Arrow |
-| Previous Slide | 126 | ↑ Up Arrow |
+| Next Slide | 124 | → Right Arrow |
+| Previous Slide | 123 | ← Left Arrow |
+| Start Presentation | 36 | Return |
+| End Presentation | 53 | Escape |
+| Black Screen | 11 | B key |
 
 ---
 
@@ -228,11 +240,32 @@ class WatchConnectionManager: NSObject, ObservableObject {
 
 **Retry Logic**: Commands are retried up to 3 times at 0.5s intervals if the iPhone is temporarily unreachable.
 
+### GestureManager
+
+Handles CoreMotion wrist gesture detection for hands-free slide control.
+
+```swift
+class GestureManager: ObservableObject {
+    @Published var isGestureEnabled: Bool
+    @Published var gestureLockEnabled: Bool
+    @Published var isInverted: Bool
+    @Published var autoToggleWithWrist: Bool
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `isGestureEnabled` | `Bool` | Whether gesture detection is active |
+| `gestureLockEnabled` | `Bool` | 3-second lockout after gesture to prevent accidental triggers |
+| `isInverted` | `Bool` | Swap flick direction mapping |
+| `autoToggleWithWrist` | `Bool` | Gestures enable on wrist raise, disable on wrist lower |
+
 ### Watch SwiftUI Views
 
 | View | Description |
 |------|-------------|
-| `ContentView` | Previous/next buttons + timer display |
+| `ContentView` | Previous/next buttons + timer display + gesture toggle |
+| `SettingsView` | Gesture lock, inversion, and auto-toggle settings |
 
 **Timer Gestures**:
 - **Tap**: Start/stop timer
