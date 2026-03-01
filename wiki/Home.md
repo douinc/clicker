@@ -61,15 +61,15 @@ graph LR
 ```
 clicker/
 ├── project.yml          # XcodeGen configuration
-├── Makefile             # Build automation
+├── justfile             # Build automation
 ├── Shared/              # Shared code between apps
 │   └── RemoteCommand.swift
 ├── MacApp/              # macOS menu bar app
 ├── iPhoneApp/           # iOS remote control app
 ├── WatchApp/            # watchOS companion app
-├── docs/                # MkDocs documentation
 ├── wiki/                # GitHub Wiki source
-└── Casks/               # Homebrew cask formula
+├── public/              # Logos and screenshots
+└── .github/             # GitHub Actions workflows
 ```
 
 ## Distribution
@@ -77,8 +77,8 @@ clicker/
 | App | Distribution | Link |
 |-----|--------------|------|
 | ClickerRemoteReceiver | GitHub Releases (DMG) | [Releases](https://github.com/douinc/clicker/releases) |
-| ClickerRemoteReceiver | Homebrew Cask | `brew tap douinc/clicker && brew install --cask clicker-remote-receiver` |
-| ClickerRemote | App Store | [Coming Soon](https://apps.apple.com) |
+| ClickerRemoteReceiver | Homebrew Cask | `brew tap douinc/tap && brew install --cask clicker-remote-receiver` |
+| ClickerRemote | App Store | [App Store](https://apps.apple.com/us/app/clickerremote/id6758130180) |
 | ClickerWatch | Bundled with iOS app | Installs automatically via Watch app |
 
 ## License

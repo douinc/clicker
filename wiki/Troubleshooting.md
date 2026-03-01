@@ -46,7 +46,7 @@ Common issues and their solutions.
 
 2. **Check Frontmost App**: Ensure your presentation app (Keynote, PowerPoint) is in focus
 
-3. **Test with TextEdit**: Open TextEdit and try — you should see up/down arrow behavior
+3. **Test with TextEdit**: Open TextEdit and try — you should see left/right arrow behavior
 
 ### Wrong Key Actions
 
@@ -55,8 +55,8 @@ Common issues and their solutions.
 **Solutions**:
 
 - Different presentation apps may use different keys
-- ClickerRemote sends Up/Down arrow keys
-- Most apps: Down = Next, Up = Previous
+- ClickerRemote sends Right/Left arrow keys
+- Most apps: Right = Next, Left = Previous
 - Some apps may be configured differently
 
 ## Build Issues
@@ -79,7 +79,7 @@ security find-identity -v -p codesigning
 
 **Check the log**:
 ```bash
-make notary-log
+just notary-log
 # Then view specific submission:
 xcrun notarytool log <submission-id> --keychain-profile notarytool-profile
 ```

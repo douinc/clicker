@@ -29,13 +29,13 @@ open Clicker.xcodeproj
 
 ```bash
 # Debug build
-make build-mac
+just build-mac
 
 # Or directly with xcodebuild
 xcodebuild -scheme ClickerMac -configuration Debug build
 
 # Run the app
-make run-mac
+just run-mac
 ```
 
 The Mac app will appear in your menu bar.
@@ -45,7 +45,7 @@ The Mac app will appear in your menu bar.
 ### Simulator
 
 ```bash
-make build-sim
+just build-sim
 
 # Or with specific simulator
 xcodebuild -scheme ClickeriOS \
@@ -60,9 +60,14 @@ xcodebuild -scheme ClickeriOS \
    ```bash
    xcrun devicectl list devices
    ```
-3. Build and install:
+3. Set device IDs in `.env` file:
    ```bash
-   make run-ios DEVICE_ID=<your-device-id>
+   XCODE_DEVICE_ID=<your-xcode-device-udid>
+   DEVICECTL_ID=<your-devicectl-uuid>
+   ```
+4. Build and install:
+   ```bash
+   just run-ios
    ```
 
 ## Development Team Setup

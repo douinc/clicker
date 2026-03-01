@@ -71,11 +71,13 @@ Commands are JSON-encoded `RemoteCommand` values:
 ```swift
 // Shared/RemoteCommand.swift
 enum RemoteCommand: String, Codable {
-    case next = "next"
-    case previous = "previous"
+    case nextSlide = "next"
+    case previousSlide = "previous"
+    case startPresentation = "start"
+    case endPresentation = "end"
+    case blackScreen = "black"
+    case keepalive = "keepalive"
 }
-
-// Wire format: {"rawValue": "next"}
 ```
 
 ### Connection Sequence
@@ -153,8 +155,12 @@ func sendKeystroke(_ keyCode: UInt16) {
 
 | Command | Key Code | Key |
 |---------|----------|-----|
-| Next | 125 | ↓ (Down Arrow) |
-| Previous | 126 | ↑ (Up Arrow) |
+| Next Slide | 124 | → (Right Arrow) |
+| Previous Slide | 123 | ← (Left Arrow) |
+| Start Presentation | 36 | Return |
+| End Presentation | 53 | Escape |
+| Black Screen | 11 | B key |
+| Keepalive | — | No keystroke |
 
 ## Apple Watch Architecture
 
