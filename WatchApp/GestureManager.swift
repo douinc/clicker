@@ -24,6 +24,14 @@ class GestureManager: ObservableObject {
     @Published var isInverted: Bool {
         didSet { UserDefaults.standard.set(isInverted, forKey: "gestureInverted") }
     }
+    @Published var autoToggleWithWrist: Bool {
+        didSet { UserDefaults.standard.set(autoToggleWithWrist, forKey: "gestureAutoToggle") }
+    }
+    @Published var gestureLockEnabled: Bool {
+        didSet { UserDefaults.standard.set(gestureLockEnabled, forKey: "gestureLockEnabled") }
+    }
+    @Published var isLocked: Bool = false
+    @Published var lockProgress: CGFloat = 0.0
 
     enum DetectedGesture: Equatable {
         case next
@@ -44,6 +52,9 @@ class GestureManager: ObservableObject {
     /// Minimum time between gesture triggers to prevent double-fires.
     private let cooldownInterval: TimeInterval = 0.8
 
+    /// Duration of the gesture lock period.
+    private let lockDuration: TimeInterval = 3.0
+
     /// Motion update frequency in Hz.
     private let updateFrequency: Double = 50.0
 
@@ -52,11 +63,14 @@ class GestureManager: ObservableObject {
     private let motionManager = CMMotionManager()
     private var lastTriggerTime: Date = .distantPast
     private let motionQueue = OperationQueue()
+    private var lockTimer: Timer?
 
     // MARK: - Initialization
 
     init() {
         self.isInverted = UserDefaults.standard.bool(forKey: "gestureInverted")
+        self.autoToggleWithWrist = UserDefaults.standard.bool(forKey: "gestureAutoToggle")
+        self.gestureLockEnabled = UserDefaults.standard.bool(forKey: "gestureLockEnabled")
         motionQueue.name = "com.dou.clicker.gesture"
         motionQueue.maxConcurrentOperationCount = 1
     }
@@ -93,6 +107,10 @@ class GestureManager: ObservableObject {
         DispatchQueue.main.async {
             self.isEnabled = false
             self.lastGesture = nil
+            self.lockTimer?.invalidate()
+            self.lockTimer = nil
+            self.isLocked = false
+            self.lockProgress = 0
         }
         print("⌚ Gesture detection stopped")
     }
@@ -114,13 +132,15 @@ class GestureManager: ObservableObject {
         guard abs(rotationX) > rotationThreshold else { return }
 
         let now = Date()
-        guard now.timeIntervalSince(lastTriggerTime) >= cooldownInterval else { return }
+        let effectiveCooldown = gestureLockEnabled ? lockDuration : cooldownInterval
+        guard now.timeIntervalSince(lastTriggerTime) >= effectiveCooldown else { return }
         lastTriggerTime = now
 
         // Positive x rotation = wrist flick forward, Negative = backward
         // When inverted: counterclockwise (negative) = next, clockwise (positive) = previous
         let isInverted = self.isInverted
         let gesture: DetectedGesture = (rotationX > 0) != isInverted ? .next : .previous
+        let lockEnabled = self.gestureLockEnabled
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -144,11 +164,41 @@ class GestureManager: ObservableObject {
                 self.onPreviousSlide?()
             }
 
-            // Clear visual indicator after a short delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                if self.lastGesture == gesture {
-                    self.lastGesture = nil
+            if lockEnabled {
+                self.startLockCountdown(for: gesture)
+            } else {
+                // Clear visual indicator after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    if self.lastGesture == gesture {
+                        self.lastGesture = nil
+                    }
                 }
+            }
+        }
+    }
+
+    // MARK: - Gesture Lock
+
+    private func startLockCountdown(for gesture: DetectedGesture) {
+        lockTimer?.invalidate()
+        isLocked = true
+        lockProgress = 1.0
+
+        let startTime = Date()
+        lockTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] timer in
+            guard let self else {
+                timer.invalidate()
+                return
+            }
+            let elapsed = Date().timeIntervalSince(startTime)
+            if elapsed >= self.lockDuration {
+                timer.invalidate()
+                self.lockTimer = nil
+                self.isLocked = false
+                self.lockProgress = 0
+                self.lastGesture = nil
+            } else {
+                self.lockProgress = CGFloat(1.0 - elapsed / self.lockDuration)
             }
         }
     }

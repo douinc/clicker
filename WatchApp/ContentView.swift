@@ -38,9 +38,10 @@ struct ContentView: View {
                                 .font(.system(size: 32, weight: .bold))
 
                             if gestureManager.lastGesture == .previous {
-                                Image(systemName: "hand.wave.fill")
+                                Image(systemName: gestureManager.isLocked ? "lock.fill" : "hand.wave.fill")
                                     .font(.system(size: 16))
                                     .foregroundColor(.yellow)
+                                    .opacity(gestureManager.gestureLockEnabled ? gestureManager.lockProgress : 1.0)
                                     .offset(x: 40, y: -10)
                                     .transition(.opacity)
                             }
@@ -49,11 +50,12 @@ struct ContentView: View {
                         .frame(height: geometry.size.height * 0.30)
                         .background(
                             gestureManager.lastGesture == .previous
-                                ? Color.yellow.opacity(0.3)
+                                ? Color.yellow.opacity(gestureManager.gestureLockEnabled ? 0.3 * gestureManager.lockProgress : 0.3)
                                 : Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .animation(.easeOut(duration: 0.2), value: gestureManager.lastGesture)
+                        .animation(.linear(duration: 0.05), value: gestureManager.lockProgress)
                     }
                     .buttonStyle(.plain)
 
@@ -64,17 +66,29 @@ struct ContentView: View {
                             gestureManager.toggle()
                             WKInterfaceDevice.current().play(gestureManager.isEnabled ? .stop : .start)
                         } label: {
-                            Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
-                                .frame(width: 30, height: 30)
-                                .background(
-                                    gestureManager.isEnabled
+                            ZStack {
+                                Image(systemName: gestureManager.isEnabled ? "hand.wave.fill" : "hand.wave")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(gestureManager.isEnabled ? .yellow : .secondary)
+
+                                if gestureManager.isLocked {
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundColor(.orange)
+                                        .offset(x: 8, y: -8)
+                                }
+                            }
+                            .frame(width: 30, height: 30)
+                            .background(
+                                gestureManager.isLocked
+                                    ? Color.orange.opacity(0.2 * gestureManager.lockProgress)
+                                    : gestureManager.isEnabled
                                         ? Color.yellow.opacity(0.15)
                                         : Color.white.opacity(0.08)
-                                )
-                                .clipShape(Circle())
-                                .animation(.easeOut(duration: 0.2), value: gestureManager.isEnabled)
+                            )
+                            .clipShape(Circle())
+                            .animation(.easeOut(duration: 0.2), value: gestureManager.isEnabled)
+                            .animation(.linear(duration: 0.05), value: gestureManager.lockProgress)
                         }
                         .buttonStyle(.plain)
                         .modifier(PrimaryGestureShortcut())
@@ -136,9 +150,10 @@ struct ContentView: View {
                                 .font(.system(size: 32, weight: .bold))
 
                             if gestureManager.lastGesture == .next {
-                                Image(systemName: "hand.wave.fill")
+                                Image(systemName: gestureManager.isLocked ? "lock.fill" : "hand.wave.fill")
                                     .font(.system(size: 16))
                                     .foregroundColor(.yellow)
+                                    .opacity(gestureManager.gestureLockEnabled ? gestureManager.lockProgress : 1.0)
                                     .offset(x: 40, y: -10)
                                     .transition(.opacity)
                             }
@@ -147,11 +162,12 @@ struct ContentView: View {
                         .frame(height: geometry.size.height * 0.30)
                         .background(
                             gestureManager.lastGesture == .next
-                                ? Color.yellow.opacity(0.3)
+                                ? Color.yellow.opacity(gestureManager.gestureLockEnabled ? 0.3 * gestureManager.lockProgress : 0.3)
                                 : Color.blue.opacity(isLuminanceReduced ? 0.1 : 0.3)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .animation(.easeOut(duration: 0.2), value: gestureManager.lastGesture)
+                        .animation(.linear(duration: 0.05), value: gestureManager.lockProgress)
                     }
                     .buttonStyle(.plain)
                 }

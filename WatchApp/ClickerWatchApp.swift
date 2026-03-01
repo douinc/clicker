@@ -25,9 +25,13 @@ struct ClickerWatchApp: App {
                     case .active:
                         sessionManager.start()
                         workoutManager.start()
+                        if gestureManager.autoToggleWithWrist {
+                            gestureManager.start()
+                        }
                     case .inactive:
-                        // Screen dimmed (AOD) — don't change anything
-                        break
+                        if gestureManager.autoToggleWithWrist {
+                            gestureManager.stop()
+                        }
                     case .background:
                         // User explicitly navigated away — stop workout to save battery
                         workoutManager.stop()
