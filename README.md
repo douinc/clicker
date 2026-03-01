@@ -54,20 +54,12 @@
 <table align="center">
   <tr>
     <td align="center">
-      <img src="public/screenshot/watch/1-gesture-disabled.PNG" alt="Watch Gesture Disabled" height="200">
-      <br><sub>Gesture Disabled</sub>
-    </td>
-    <td align="center">
-      <img src="public/screenshot/watch/2-gesture-enabled.PNG" alt="Watch Gesture Enabled" height="200">
+      <img src="public/screenshot/watch/1-gesture-enabled.PNG" alt="Watch Gesture Disabled" height="200">
       <br><sub>Gesture Enabled</sub>
     </td>
     <td align="center">
-      <img src="public/screenshot/watch/3-gesture-previous.PNG" alt="Watch Gesture Previous" height="200">
-      <br><sub>Gesture Previous</sub>
-    </td>
-    <td align="center">
-      <img src="public/screenshot/watch/4-gesture-next.PNG" alt="Watch Gesture Next" height="200">
-      <br><sub>Gesture Next</sub>
+      <img src="public/screenshot/watch/2-settings.PNG" alt="Watch Gesture Previous" height="200">
+      <br><sub>Settings</sub>
     </td>
   </tr>
 </table>
@@ -223,14 +215,17 @@ clicker/
 
 ```mermaid
 sequenceDiagram
+    participant Watch
     participant iPhone
     participant Mac
     participant Keynote
 
     Mac->>Mac: Advertise via MultipeerConnectivity
     iPhone->>Mac: Discover & connect
+    Watch->>iPhone: Connect via WatchConnectivity
 
     loop Presentation
+        Watch->>iPhone: Send command (WCSession)
         iPhone->>Mac: Send command (JSON)
         Mac->>Keynote: Inject keystroke (CGEvent)
     end
