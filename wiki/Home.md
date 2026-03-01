@@ -17,9 +17,9 @@ Welcome to the ClickerRemote developer documentation. This wiki contains technic
 
 ClickerRemote is a presentation remote system consisting of three apps:
 
-- **ClickerRemote** (iOS) — Remote control app for iPhone
-- **ClickerRemoteReceiver** (macOS) — Menu bar app that receives commands
-- **ClickerWatch** (watchOS) — Apple Watch companion for wrist-based control
+- **ClickerRemote** (iOS v1.6) — Remote control app for iPhone
+- **ClickerRemoteReceiver** (macOS v1.2) — Menu bar app that receives commands
+- **ClickerWatch** (watchOS v1.6) — Apple Watch companion for wrist-based control
 
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
@@ -69,6 +69,7 @@ clicker/
 ├── WatchApp/            # watchOS companion app
 ├── wiki/                # GitHub Wiki source
 ├── public/              # Logos and screenshots
+├── build/               # Build artifacts
 └── .github/             # GitHub Actions workflows
 ```
 
