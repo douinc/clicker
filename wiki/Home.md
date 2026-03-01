@@ -1,6 +1,6 @@
 # ClickerRemote Developer Wiki
 
-Welcome to the ClickerRemote developer documentation. This wiki contains technical information for developers who want to build, modify, or contribute to the project.
+Welcome to the ClickerRemote developer documentation. This wiki contains technical documentation for developers who want to build, modify, or contribute to the project.
 
 ## Quick Links
 
