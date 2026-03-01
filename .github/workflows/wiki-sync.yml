@@ -2,6 +2,11 @@ name: 'Wiki Auto-Sync'
 # Claude Code를 사용하여 PR 머지 시 Wiki를 자동으로 업데이트합니다
 
 on:
+  # Auto-sync wiki/ to GitHub Wiki on push to main
+  push:
+    branches: [main]
+    paths:
+      - 'wiki/**'
   # Trigger on PR comments containing the trigger phrase
   issue_comment:
     types: [created]
@@ -27,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     # Only run on PR events with wiki-sync label, or issue_comment with trigger phrase
     if: |
+      github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'wiki-sync')) ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/sync-wiki'))
@@ -37,6 +43,7 @@ jobs:
         fetch-depth: 0
 
     - name: Run Claude Code Action
+      if: github.event_name != 'push'
       uses: anthropics/claude-code-action@v1
       with:
         claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
