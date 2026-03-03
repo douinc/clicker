@@ -11,6 +11,9 @@
 - [[API-Reference]]
 - [[Contributing]]
 
+### Roadmap
+- [[Feature-Ideas]]
+
 ### Help
 - [[Troubleshooting]]
 
