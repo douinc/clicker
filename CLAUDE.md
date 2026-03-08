@@ -113,10 +113,8 @@ The `update-tap` command triggers a GitHub Action in `douinc/homebrew-tap` that:
 ### Apple Watch App Specifics
 - App name: `ClickerWatch` (embedded in iOS app, distributed via App Store)
 - Bundle ID: `com.dou.clicker-ios.watchkitapp`
-- Gesture detection via CoreMotion (wrist flick rotation rate on x-axis)
-- Gesture lock: 3-second lockout after gesture to prevent accidental triggers
-- Gesture inversion: option to swap flick direction mapping
-- Auto-toggle: gesture activation follows wrist raise/lower
+- Double-tap gesture via `handGestureShortcut(.primaryAction)` on watchOS 11+ (Apple Watch Series 9+ / Ultra 2) for next slide
+- Note: Double-tap requires active display (wrist raised); does not work in always-on / luminance-reduced state
 - HealthKit workout session keeps app active during presentations
 - Extended WatchKit session for background operation
 
