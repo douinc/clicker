@@ -15,15 +15,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6</string>
+	<string>1.7</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Clicker does not read your health data. HealthKit is used solely to maintain an active workout session that keeps the app visible during presentations.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible for reliable gesture control.</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations.</string>
+	<string>Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible during presentations.</string>
 	<key>WKApplication</key>
 	<true/>
 	<key>WKBackgroundModes</key>

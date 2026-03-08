@@ -5,7 +5,7 @@
 This is a SwiftUI-based presentation remote system with three apps:
 - **Mac App** (`ClickerRemoteReceiver` v1.2): Menu bar app that receives commands and sends keystrokes to presentation software
 - **iPhone App** (`ClickerRemote` v1.6): Remote control with vertical slide navigation and presentation timer
-- **Apple Watch App** (`ClickerWatch` v1.6): Companion watch app with gesture-based slide control using wrist flicks
+- **Apple Watch App** (`ClickerWatch` v1.6): Companion watch app with gesture-based slide control using double tap motion for next slide
 
 ## Tech Stack
 
@@ -129,6 +129,7 @@ Team ID: `HD35YQ72U4` (DOU Inc.)
 1. Edit Swift source files directly
 2. If changing build settings, targets, or Info.plist keys, edit `project.yml`
 3. Run `just generate` after modifying `project.yml` to regenerate the Xcode project
+  - Note that this overrides the version information.
 
 ## Useful Debugging Commands
 

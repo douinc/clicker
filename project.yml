@@ -94,7 +94,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
         PRODUCT_NAME: ClickerRemote
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        MARKETING_VERSION: "1.6"
+        MARKETING_VERSION: "1.7"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -124,22 +124,20 @@ targets:
         WKCompanionAppBundleIdentifier: com.dou.clicker-ios
         WKBackgroundModes:
           - self-care
-        NSMotionUsageDescription: "Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
         NSHealthShareUsageDescription: "Clicker does not read your health data. HealthKit is used solely to maintain an active workout session that keeps the app visible during presentations."
-        NSHealthUpdateUsageDescription: "Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible for reliable gesture control."
+        NSHealthUpdateUsageDescription: "Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible during presentations."
     entitlements:
       path: WatchApp/ClickerWatch.entitlements
       properties:
         com.apple.developer.healthkit: true
     dependencies:
-      - sdk: CoreMotion.framework
       - sdk: HealthKit.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
         PRODUCT_NAME: ClickerWatch
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
-        MARKETING_VERSION: "1.6"
+        MARKETING_VERSION: "1.7"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
