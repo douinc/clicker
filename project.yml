@@ -124,14 +124,9 @@ targets:
         WKCompanionAppBundleIdentifier: com.dou.clicker-ios
         WKBackgroundModes:
           - self-care
-        NSHealthShareUsageDescription: "Clicker does not read your health data. HealthKit is used solely to maintain an active workout session that keeps the app visible during presentations."
-        NSHealthUpdateUsageDescription: "Clicker uses HealthKit to maintain an active session during presentations, keeping the app visible during presentations."
     entitlements:
       path: WatchApp/ClickerWatch.entitlements
-      properties:
-        com.apple.developer.healthkit: true
-    dependencies:
-      - sdk: HealthKit.framework
+      properties: {}
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp

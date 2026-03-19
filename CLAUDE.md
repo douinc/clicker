@@ -115,8 +115,7 @@ The `update-tap` command triggers a GitHub Action in `douinc/homebrew-tap` that:
 - Bundle ID: `com.dou.clicker-ios.watchkitapp`
 - Double-tap gesture via `handGestureShortcut(.primaryAction)` on watchOS 11+ (Apple Watch Series 9+ / Ultra 2) for next slide
 - Note: Double-tap requires active display (wrist raised); does not work in always-on / luminance-reduced state
-- HealthKit workout session keeps app active during presentations
-- Extended WatchKit session for background operation
+- Extended WatchKit runtime session (`WKExtendedRuntimeSession` with `self-care` background mode) keeps app active during presentations
 
 ## Development Team
 
