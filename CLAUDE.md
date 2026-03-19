@@ -4,8 +4,8 @@
 
 This is a SwiftUI-based presentation remote system with three apps:
 - **Mac App** (`ClickerRemoteReceiver` v1.2): Menu bar app that receives commands and sends keystrokes to presentation software
-- **iPhone App** (`ClickerRemote` v1.6): Remote control with vertical slide navigation and presentation timer
-- **Apple Watch App** (`ClickerWatch` v1.6): Companion watch app with gesture-based slide control using double tap motion for next slide
+- **iPhone App** (`ClickerRemote` v1.7): Remote control with vertical slide navigation and presentation timer
+- **Apple Watch App** (`ClickerWatch` v1.7): Companion watch app with gesture-based slide control using double tap motion for next slide
 
 ## Tech Stack
 
