@@ -120,6 +120,7 @@ targets:
     info:
       path: LiveActivityWidget/Info.plist
       properties:
+        CFBundleDisplayName: ClickerLiveActivity
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
