@@ -88,13 +88,14 @@ targets:
         NSBonjourServices:
           - _clickerremote._tcp
           - _clickerremote._udp
+        NSSupportsLiveActivities: true
         NSLocalNetworkUsageDescription: "Clicker needs local network access to find and connect to your Mac."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
         PRODUCT_NAME: ClickerRemote
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        MARKETING_VERSION: "1.7"
+        MARKETING_VERSION: "1.8"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -104,6 +105,34 @@ targets:
     dependencies:
       - target: ClickerWatch
         embed: true
+      - target: ClickerLiveActivity
+        embed: true
+
+  # ─────────────────────────────────────────────────────────────
+  # Live Activity Widget Extension
+  # ─────────────────────────────────────────────────────────────
+  ClickerLiveActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: LiveActivityWidget
+      - path: iPhoneApp/PresentationAttributes.swift
+    info:
+      path: LiveActivityWidget/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.LiveActivity
+        PRODUCT_NAME: ClickerLiveActivity
+        IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+        MARKETING_VERSION: "1.8"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: HD35YQ72U4
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
 
   # ─────────────────────────────────────────────────────────────
   # Apple Watch App
@@ -132,7 +161,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
         PRODUCT_NAME: ClickerWatch
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
-        MARKETING_VERSION: "1.7"
+        MARKETING_VERSION: "1.8"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -155,6 +184,7 @@ schemes:
       targets:
         ClickeriOS: all
         ClickerWatch: all
+        ClickerLiveActivity: all
     run:
       config: Debug
       executable: ClickeriOS

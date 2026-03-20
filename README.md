@@ -133,15 +133,17 @@ Download **ClickerRemote** from the [App Store](https://apps.apple.com/us/app/cl
 | Feature | Description |
 |---------|-------------|
 | **Large Touch Targets** | Easy-to-hit buttons designed for stage use |
-| **Apple Watch** | Control slides from your wrist with tap buttons or hands-free wrist gestures |
-| **Wrist Gestures** | Flick forward for next slide, flick back for previous — with haptic confirmation |
+| **Apple Watch** | Control slides from your wrist with tap buttons, Digital Crown, or double-tap gesture |
+| **Digital Crown** | Rotate the crown to navigate slides — clockwise for next, counterclockwise for previous |
+| **Live Activities** | See your timer on the Lock Screen and Dynamic Island without opening the app |
 | **Presentation Timer** | Track time with haptic alerts at custom intervals |
 | **Always-On Display** | Screen stays on while presenting — no connection drops |
 | **Dark Mode** | Stage-friendly liquid glass aesthetic |
 | **Visual Progress** | Color-coded timer bar (green → yellow → orange → red) |
 | **Duration Presets** | 5, 10, 15, 20, 30 minutes or unlimited |
 | **Haptic Feedback** | Vibrate every 30s, 1m, 2m, or 5m |
-| **Stays Active** | Workout session keeps Watch app visible during presentations |
+| **Double-Tap Gesture** | Hands-free next slide on Apple Watch Series 9+ / Ultra 2 (watchOS 11+) |
+| **Stays Active** | Extended runtime session keeps Watch app visible during presentations |
 
 ---
 

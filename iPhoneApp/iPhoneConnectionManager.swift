@@ -246,6 +246,7 @@ class iPhoneConnectionManager: NSObject, ObservableObject {
         connectedMac = nil
         isConnected = false
         statusMessage = "Disconnected"
+        LiveActivityManager.shared.endActivity()
         startBrowsing()
     }
     
@@ -296,6 +297,7 @@ extension iPhoneConnectionManager: MCSessionDelegate {
                 self.updateWatchWithConnectionStatus()
                 self.isSearching = false
                 self.lastError = nil
+                LiveActivityManager.shared.startActivity(macName: peerID.displayName)
 
             case .connecting:
                 self.debugLog("SESSION STATE: Connecting to \(peerID.displayName)", level: .network)
@@ -310,6 +312,7 @@ extension iPhoneConnectionManager: MCSessionDelegate {
                     self.isConnected = false
                     self.stopKeepalive()
                     self.updateWatchWithConnectionStatus()
+                    LiveActivityManager.shared.endActivity()
                     if self.lastConnectedMacName != nil {
                         self.statusMessage = "Connection lost, reconnecting..."
                         self.debugLog("Scheduling reconnect attempt...", level: .info)

@@ -8,6 +8,9 @@ struct ContentView: View {
     @State private var accumulatedTime: TimeInterval = 0
     @State private var timerRunning = false
     @State private var showSettings = false
+    @State private var crownOffset: Double = 0
+
+    private let crownThreshold: Double = 3.0
 
     private func elapsedTime(at date: Date) -> TimeInterval {
         if timerRunning, let start = timerStartDate {
@@ -105,6 +108,27 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 4)
                 .padding(.vertical, 4)
+            }
+        }
+        .focusable()
+        .digitalCrownRotation(
+            $crownOffset,
+            from: -crownThreshold,
+            through: crownThreshold,
+            by: 1.0,
+            sensitivity: .medium,
+            isContinuous: false,
+            isHapticFeedbackEnabled: true
+        )
+        .onChange(of: crownOffset) { _, newValue in
+            if newValue >= crownThreshold {
+                WKInterfaceDevice.current().play(.directionUp)
+                connectionManager.nextSlide()
+                crownOffset = 0
+            } else if newValue <= -crownThreshold {
+                WKInterfaceDevice.current().play(.directionDown)
+                connectionManager.previousSlide()
+                crownOffset = 0
             }
         }
     }
