@@ -22,7 +22,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "info.circle")
                         .foregroundColor(.secondary)
-                    Text("Clicker Remote v1.8")
+                    Text("Clicker Remote")
                         .font(.system(size: 15))
                 }
             } footer: {
