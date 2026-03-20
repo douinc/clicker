@@ -9,8 +9,8 @@ struct ContentView: View {
     @State private var timerRunning = false
     @State private var showSettings = false
     @State private var crownOffset: Double = 0
-
-    private let crownThreshold: Double = 3.0
+    @State private var lastCrownDetent: Int = 0
+    @AppStorage("invertCrown") private var invertCrown = false
 
     private func elapsedTime(at date: Date) -> TimeInterval {
         if timerRunning, let start = timerStartDate {
@@ -113,23 +113,22 @@ struct ContentView: View {
         .focusable()
         .digitalCrownRotation(
             $crownOffset,
-            from: -crownThreshold,
-            through: crownThreshold,
-            by: 1.0,
+            from: -10000.0,
+            through: 10000.0,
             sensitivity: .medium,
-            isContinuous: false,
-            isHapticFeedbackEnabled: true
+            isContinuous: true
         )
         .onChange(of: crownOffset) { _, newValue in
-            if newValue >= crownThreshold {
-                WKInterfaceDevice.current().play(.directionUp)
+            let detent = Int(newValue.rounded())
+            guard detent != lastCrownDetent else { return }
+            let isForward = invertCrown ? (detent < lastCrownDetent) : (detent > lastCrownDetent)
+            WKInterfaceDevice.current().play(.click)
+            if isForward {
                 connectionManager.nextSlide()
-                crownOffset = 0
-            } else if newValue <= -crownThreshold {
-                WKInterfaceDevice.current().play(.directionDown)
+            } else {
                 connectionManager.previousSlide()
-                crownOffset = 0
             }
+            lastCrownDetent = detent
         }
     }
 
