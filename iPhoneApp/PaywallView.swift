@@ -12,7 +12,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        SubscriptionStoreView(groupID: subscriptionGroupID) {
+        SubscriptionStoreView(productIDs: [subscriptionProductID]) {
             VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 16) {
