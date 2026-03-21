@@ -12,7 +12,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        SubscriptionStoreView(groupID: subscriptionGroupID) {
+        SubscriptionStoreView(productIDs: [subscriptionProductID]) {
             VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 16) {
@@ -45,7 +45,7 @@ struct PaywallView: View {
             }
             .padding(.top, 40)
         }
-        .subscriptionStoreButtonLabel(.multiline)
+        .subscriptionStoreButtonLabel(.action)
         .storeButton(.visible, for: .restorePurchases)
         .onInAppPurchaseCompletion { _, result in
             if case .success(.success(_)) = result {
