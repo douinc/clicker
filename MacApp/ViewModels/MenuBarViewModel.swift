@@ -14,6 +14,7 @@ final class MenuBarViewModel: ObservableObject {
     @Published private(set) var isConnected: Bool = false
     @Published private(set) var isListening: Bool = false
     @Published private(set) var hasAccessibilityPermission: Bool = false
+    @Published private(set) var availableUpdate: String?
 
     // MARK: - Services
 
@@ -21,6 +22,7 @@ final class MenuBarViewModel: ObservableObject {
     let preferences: PreferencesManager
     let permissionService: PermissionService
     let keystrokeService: KeystrokeService
+    let updateChecker: UpdateChecker
 
     // MARK: - Private Properties
 
@@ -32,12 +34,14 @@ final class MenuBarViewModel: ObservableObject {
         connectionManager: MacConnectionManager,
         preferences: PreferencesManager = .shared,
         permissionService: PermissionService = .shared,
-        keystrokeService: KeystrokeService = .shared
+        keystrokeService: KeystrokeService = .shared,
+        updateChecker: UpdateChecker
     ) {
         self.connectionManager = connectionManager
         self.preferences = preferences
         self.permissionService = permissionService
         self.keystrokeService = keystrokeService
+        self.updateChecker = updateChecker
 
         setupBindings()
         setupCommandHandler()
@@ -82,6 +86,11 @@ final class MenuBarViewModel: ObservableObject {
         permissionService.$hasAccessibilityPermission
             .receive(on: DispatchQueue.main)
             .assign(to: &$hasAccessibilityPermission)
+
+        // Available update
+        updateChecker.$availableUpdate
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$availableUpdate)
     }
 
     private func setupCommandHandler() {

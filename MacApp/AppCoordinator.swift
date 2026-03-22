@@ -17,6 +17,7 @@ final class AppCoordinator: ObservableObject {
     let permissionService: PermissionService
     let keystrokeService: KeystrokeService
     let connectionManager: MacConnectionManager
+    let updateChecker = UpdateChecker()
 
     // MARK: - View Models
 
@@ -25,7 +26,8 @@ final class AppCoordinator: ObservableObject {
             connectionManager: connectionManager,
             preferences: preferences,
             permissionService: permissionService,
-            keystrokeService: keystrokeService
+            keystrokeService: keystrokeService,
+            updateChecker: updateChecker
         )
     }()
 
@@ -64,6 +66,8 @@ final class AppCoordinator: ObservableObject {
     func didFinishLaunching() {
         // Check permission status
         permissionService.checkPermissionStatus()
+
+        updateChecker.checkIfNeeded()
 
         if !preferences.hasCompletedOnboarding {
             // First launch - show welcome window

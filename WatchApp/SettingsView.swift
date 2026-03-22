@@ -1,47 +1,32 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var gestureManager: GestureManager
+    @AppStorage("invertCrown") private var invertCrown = false
 
     var body: some View {
         List {
             Section {
-                Toggle(isOn: $gestureManager.gestureLockEnabled) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Gesture Lock")
-                            .font(.system(size: 15))
-                    }
+                Toggle(isOn: $invertCrown) {
+                    Label("Invert Crown", systemImage: "digitalcrown.horizontal.arrow.counterclockwise")
+                        .font(.system(size: 15))
                 }
             } footer: {
-                Text("After a gesture, lock out further gestures for 3 seconds to prevent accidental triggers")
+                Text(invertCrown
+                     ? "Crown clockwise = previous slide, counterclockwise = next slide."
+                     : "Crown clockwise = next slide, counterclockwise = previous slide.")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
 
             Section {
-                Toggle(isOn: $gestureManager.isInverted) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Invert Gestures")
-                            .font(.system(size: 15))
-                    }
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                    Text("Clicker Remote")
+                        .font(.system(size: 15))
                 }
             } footer: {
-                Text(gestureManager.isInverted
-                     ? "Counterclockwise → Next\nClockwise → Previous"
-                     : "Clockwise → Next\nCounterclockwise → Previous")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-
-            Section {
-                Toggle(isOn: $gestureManager.autoToggleWithWrist) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Auto-toggle with Wrist")
-                            .font(.system(size: 15))
-                    }
-                }
-            } footer: {
-                Text("Gestures enable on wrist raise and disable on wrist lower")
+                Text("Use the large button, Digital Crown, or double-tap gesture (watchOS 11+) to advance slides.")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
@@ -53,6 +38,5 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
-            .environmentObject(GestureManager())
     }
 }

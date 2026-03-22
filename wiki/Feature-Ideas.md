@@ -125,7 +125,7 @@ Let users rearrange, resize, or hide buttons on the iPhone remote. Some presente
 Allow light mode for bright environments or custom accent colors beyond the current dark-only design. Per-user preference with quick toggle. Keep dark mode as default since it's optimized for stage visibility.
 
 ### Configurable Haptic Patterns 🟡
-Let users create custom vibration patterns for different events: slide advance, timer milestones, gesture lock, connection lost. Different intensity levels and rhythms to convey information without looking at the screen.
+Let users create custom vibration patterns for different events: slide advance, timer milestones, connection lost. Different intensity levels and rhythms to convey information without looking at the screen.
 
 ---
 
@@ -141,7 +141,7 @@ A widget in the watchOS Smart Stack showing timer and connection status at a gla
 Use the Digital Crown rotation to scroll through slides — rotate forward for next, backward for previous. Provides a tactile, precise alternative to wrist gestures or button taps. Configurable sensitivity and detent mapping.
 
 ### Expanded Double-Tap Gestures 🟢
-Build on the existing watchOS 11 `handGestureShortcut` support. Map double-tap to configurable actions: next slide, previous slide, start/stop timer, or toggle gesture lock. Let users choose what double-tap does in settings.
+Build on the existing watchOS 11 `handGestureShortcut` support. Map double-tap to configurable actions: next slide, previous slide, or start/stop timer. Let users choose what double-tap does in settings.
 
 ---
 

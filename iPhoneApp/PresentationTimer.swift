@@ -32,7 +32,9 @@ class PresentationTimer: ObservableObject {
     // MARK: - Published Properties
     @Published var elapsedTime: TimeInterval = 0
     @Published var isRunning = false
-    @Published var config = TimerConfig(vibrationInterval: 60, totalDuration: nil)
+    @Published var config = TimerConfig(vibrationInterval: 60, totalDuration: nil) {
+        didSet { updateLiveActivity() }
+    }
     @Published var lastVibratedAt: TimeInterval = 0
     
     // MARK: - Private Properties
@@ -94,30 +96,49 @@ class PresentationTimer: ObservableObject {
     }
     
     // MARK: - Timer Controls
+    /// The date when the current timer run started (used for Live Activity)
+    private var timerStartDate: Date?
+
     func start() {
         guard !isRunning else { return }
-        
+
         isRunning = true
         lastVibratedAt = elapsedTime
-        
+        timerStartDate = Date()
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tick()
         }
-        
+
         // Keep timer running in background
         RunLoop.current.add(timer!, forMode: .common)
+        updateLiveActivity()
     }
-    
+
     func pause() {
         isRunning = false
+        timerStartDate = nil
         timer?.invalidate()
         timer = nil
+        updateLiveActivity()
     }
-    
+
     func reset() {
         pause()
         elapsedTime = 0
         lastVibratedAt = 0
+        updateLiveActivity()
+    }
+
+    // MARK: - Live Activity
+
+    private func updateLiveActivity() {
+        LiveActivityManager.shared.updateTimerState(
+            startDate: timerStartDate,
+            accumulatedSeconds: Int(elapsedTime),
+            isRunning: isRunning,
+            totalDuration: config.totalDuration.map { Int($0) }
+        )
     }
     
     func toggle() {

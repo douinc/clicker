@@ -240,32 +240,12 @@ class WatchConnectionManager: NSObject, ObservableObject {
 
 **Retry Logic**: Commands are retried up to 3 times at 0.5s intervals if the iPhone is temporarily unreachable.
 
-### GestureManager
-
-Handles CoreMotion wrist gesture detection for hands-free slide control.
-
-```swift
-class GestureManager: ObservableObject {
-    @Published var isGestureEnabled: Bool
-    @Published var gestureLockEnabled: Bool
-    @Published var isInverted: Bool
-    @Published var autoToggleWithWrist: Bool
-}
-```
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `isGestureEnabled` | `Bool` | Whether gesture detection is active |
-| `gestureLockEnabled` | `Bool` | 3-second lockout after gesture to prevent accidental triggers |
-| `isInverted` | `Bool` | Swap flick direction mapping |
-| `autoToggleWithWrist` | `Bool` | Gestures enable on wrist raise, disable on wrist lower |
-
 ### Watch SwiftUI Views
 
 | View | Description |
 |------|-------------|
-| `ContentView` | Previous/next buttons + timer display + gesture toggle |
-| `SettingsView` | Gesture lock, inversion, and auto-toggle settings |
+| `ContentView` | Next/previous buttons + timer display + double-tap gesture support |
+| `SettingsView` | Watch app settings |
 
 **Timer Gestures**:
 - **Tap**: Start/stop timer

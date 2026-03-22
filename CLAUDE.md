@@ -3,9 +3,9 @@
 ## Project Overview
 
 This is a SwiftUI-based presentation remote system with three apps:
-- **Mac App** (`ClickerRemoteReceiver` v1.2): Menu bar app that receives commands and sends keystrokes to presentation software
-- **iPhone App** (`ClickerRemote` v1.6): Remote control with vertical slide navigation and presentation timer
-- **Apple Watch App** (`ClickerWatch` v1.6): Companion watch app with gesture-based slide control using wrist flicks
+- **Mac App** (`ClickerRemoteReceiver` v1.8): Menu bar app that receives commands and sends keystrokes to presentation software
+- **iPhone App** (`ClickerRemote` v1.8): Remote control with vertical slide navigation and presentation timer
+- **Apple Watch App** (`ClickerWatch` v1.8): Companion watch app with gesture-based slide control using double tap motion for next slide
 
 ## Tech Stack
 
@@ -64,7 +64,7 @@ The notarized DMG is created at `./build/ClickerRemoteReceiver-{version}.dmg`.
 **Create GitHub release and update Homebrew tap:**
 ```bash
 # Create the release
-gh release create v1.2 ./build/ClickerRemoteReceiver-1.2.dmg --title 'Clicker v1.2' --notes 'Release notes'
+gh release create v1.8 ./build/ClickerRemoteReceiver-1.8.dmg --title 'Clicker v1.8' --notes 'Release notes'
 
 # Trigger homebrew-tap update (auto-calculates SHA256)
 just update-tap
@@ -113,12 +113,9 @@ The `update-tap` command triggers a GitHub Action in `douinc/homebrew-tap` that:
 ### Apple Watch App Specifics
 - App name: `ClickerWatch` (embedded in iOS app, distributed via App Store)
 - Bundle ID: `com.dou.clicker-ios.watchkitapp`
-- Gesture detection via CoreMotion (wrist flick rotation rate on x-axis)
-- Gesture lock: 3-second lockout after gesture to prevent accidental triggers
-- Gesture inversion: option to swap flick direction mapping
-- Auto-toggle: gesture activation follows wrist raise/lower
-- HealthKit workout session keeps app active during presentations
-- Extended WatchKit session for background operation
+- Double-tap gesture via `handGestureShortcut(.primaryAction)` on watchOS 11+ (Apple Watch Series 9+ / Ultra 2) for next slide
+- Note: Double-tap requires active display (wrist raised); does not work in always-on / luminance-reduced state
+- Extended WatchKit runtime session (`WKExtendedRuntimeSession` with `self-care` background mode) keeps app active during presentations
 
 ## Development Team
 
@@ -129,6 +126,7 @@ Team ID: `HD35YQ72U4` (DOU Inc.)
 1. Edit Swift source files directly
 2. If changing build settings, targets, or Info.plist keys, edit `project.yml`
 3. Run `just generate` after modifying `project.yml` to regenerate the Xcode project
+  - Note that this overrides the version information.
 
 ## Useful Debugging Commands
 
