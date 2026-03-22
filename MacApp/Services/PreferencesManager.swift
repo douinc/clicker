@@ -1,4 +1,5 @@
 import Foundation
+import ServiceManagement
 
 /// Manages app preferences and first-launch state using UserDefaults
 /// Provides a centralized, testable interface for all app settings
@@ -24,6 +25,20 @@ final class PreferencesManager: ObservableObject {
         }
     }
 
+    @Published var launchAtLogin: Bool {
+        didSet {
+            do {
+                if launchAtLogin {
+                    try SMAppService.mainApp.register()
+                } else {
+                    try SMAppService.mainApp.unregister()
+                }
+            } catch {
+                launchAtLogin = oldValue
+            }
+        }
+    }
+
     // MARK: - Private Properties
     private let defaults: UserDefaults
 
@@ -34,6 +49,7 @@ final class PreferencesManager: ObservableObject {
         // Load persisted values
         self.hasCompletedOnboarding = defaults.bool(forKey: Keys.hasCompletedOnboarding)
         self.debugMenuEnabled = defaults.bool(forKey: Keys.debugMenuEnabled)
+        self.launchAtLogin = SMAppService.mainApp.status == .enabled
     }
 
     // MARK: - Public Methods

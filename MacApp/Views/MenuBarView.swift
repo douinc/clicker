@@ -50,6 +50,15 @@ struct MenuBarView: View {
 
             Divider()
 
+            // Update available
+            if let update = viewModel.availableUpdate {
+                Button("Update Available (v\(update))") {
+                    NSWorkspace.shared.open(URL(string: "https://github.com/douinc/clicker/releases/latest")!)
+                }
+
+                Divider()
+            }
+
             // Debug menu (conditional)
             if preferences.debugMenuEnabled {
                 Menu("Debug") {
@@ -110,12 +119,6 @@ struct MenuBarIcon: View {
     let isConnected: Bool
 
     var body: some View {
-        if let nsImage = NSImage(named: "MenuBarIcon") {
-            Image(nsImage: nsImage)
-                .renderingMode(.template)
-        } else {
-            // Fallback to SF Symbol
-            Image(systemName: isConnected ? "cursorarrow.click.2" : "cursorarrow.click")
-        }
+        Image(systemName: isConnected ? "cursorarrow.click.2" : "cursorarrow.click")
     }
 }

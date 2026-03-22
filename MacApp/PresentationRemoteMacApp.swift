@@ -133,6 +133,10 @@ struct SettingsView: View {
                 .padding(.vertical, 8)
             }
 
+            Section("General") {
+                Toggle("Launch at Login", isOn: $preferences.launchAtLogin)
+            }
+
             Section("Permissions") {
                 HStack {
                     Text("Accessibility Permission")
