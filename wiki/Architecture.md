@@ -188,6 +188,32 @@ session.sendMessage(["command": "next"], replyHandler: { reply in
 
 The iPhone relays commands to the Mac and sends connection status back to the Watch via `updateApplicationContext`.
 
+### Gesture Detection (Flick Mode)
+
+The Watch uses CoreMotion's gyroscope to detect wrist flick gestures:
+
+```swift
+// GestureManager.swift — processMotion()
+let rotationX = motion.rotationRate.x   // Wrist flexion/extension axis
+guard abs(rotationX) > rotationThreshold else { return }  // 3.0 rad/s threshold
+
+let gesture: DetectedGesture = (rotationX > 0) != isInverted ? .next : .previous
+
+// "No Going Back" — skip backward gestures entirely
+if gesture == .previous && self.noGoingBack { return }
+```
+
+**Settings** (persisted via UserDefaults):
+
+| Setting | Key | Default | Description |
+|---------|-----|---------|-------------|
+| Gesture Lock | `gestureLockEnabled` | `false` | 3-second cooldown after each gesture |
+| Invert Gestures | `gestureInverted` | `false` | Swap forward/backward flick directions |
+| Auto-toggle with Wrist | `gestureAutoToggle` | `false` | Enable on wrist raise, disable on wrist lower |
+| No Going Back | `gestureNoGoingBack` | `false` | Ignore backward flick gestures (forward-only) |
+
+When "No Going Back" is enabled, the previous-slide button in the UI is also disabled and dimmed to provide visual feedback.
+
 ### Always-On Display
 
 When connected, the iPhone disables the idle timer to prevent the screen from locking:

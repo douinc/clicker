@@ -240,12 +240,44 @@ class WatchConnectionManager: NSObject, ObservableObject {
 
 **Retry Logic**: Commands are retried up to 3 times at 0.5s intervals if the iPhone is temporarily unreachable.
 
+### GestureManager
+
+Detects wrist flick gestures using CoreMotion for hands-free slide control.
+
+```swift
+class GestureManager: ObservableObject {
+    @Published var isEnabled: Bool
+    @Published var lastGesture: DetectedGesture?
+    @Published var isInverted: Bool
+    @Published var autoToggleWithWrist: Bool
+    @Published var gestureLockEnabled: Bool
+    @Published var noGoingBack: Bool
+    @Published var isLocked: Bool
+    @Published var lockProgress: CGFloat
+
+    func start()
+    func stop()
+    func toggle()
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `isEnabled` | `Bool` | Whether gesture detection is active |
+| `lastGesture` | `DetectedGesture?` | Most recently detected gesture (`.next` or `.previous`) |
+| `isInverted` | `Bool` | Swap forward/backward flick directions |
+| `autoToggleWithWrist` | `Bool` | Auto-enable on wrist raise, disable on wrist lower |
+| `gestureLockEnabled` | `Bool` | Enable 3-second cooldown after each gesture |
+| `noGoingBack` | `Bool` | Ignore backward flick gestures (forward-only navigation) |
+| `isLocked` | `Bool` | Currently in lock cooldown period |
+| `lockProgress` | `CGFloat` | Lock countdown progress (1.0 → 0.0) |
+
 ### Watch SwiftUI Views
 
 | View | Description |
 |------|-------------|
-| `ContentView` | Next/previous buttons + timer display + double-tap gesture support |
-| `SettingsView` | Watch app settings |
+| `ContentView` | Next/previous buttons + timer display + double-tap gesture support; in flick mode, previous button is disabled when "No Going Back" is on |
+| `SettingsView` | Watch app settings (gesture mode, gesture lock, no going back, invert gestures, auto-toggle, invert crown) |
 
 **Timer Gestures**:
 - **Tap**: Start/stop timer

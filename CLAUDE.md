@@ -115,6 +115,9 @@ The `update-tap` command triggers a GitHub Action in `douinc/homebrew-tap` that:
 - Bundle ID: `com.dou.clicker-ios.watchkitapp`
 - Double-tap gesture via `handGestureShortcut(.primaryAction)` on watchOS 11+ (Apple Watch Series 9+ / Ultra 2) for next slide
 - Note: Double-tap requires active display (wrist raised); does not work in always-on / luminance-reduced state
+- Wrist flick mode uses CoreMotion gyroscope (`rotationRate.x`) to detect forward/backward wrist flicks for next/previous slide
+- "No Going Back" toggle (`gestureNoGoingBack` in UserDefaults) disables backward flick gestures for forward-only navigation, reducing accidental triggers during presentations
+- Flick mode settings: gesture lock (3s cooldown), invert gestures, auto-toggle with wrist raise, no going back
 - Extended WatchKit runtime session (`WKExtendedRuntimeSession` with `self-care` background mode) keeps app active during presentations
 
 ## Development Team

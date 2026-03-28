@@ -161,6 +161,14 @@ Keys must be in `info.properties`, not just the source Info.plist files.
 
 **Solution**: Long press (not tap) the timer display. You should feel a strong haptic pulse confirming the reset.
 
+### Wrist Flick Only Goes Forward / Previous Not Working
+
+**Check "No Going Back" setting**: Open Watch Settings → ensure "No Going Back" is toggled off. When enabled, backward flick gestures are intentionally ignored and the previous-slide button is dimmed.
+
+### Wrist Flick Triggers Wrong Direction
+
+**Check "Invert Gestures" setting**: Open Watch Settings → toggle "Invert Gestures" to swap the forward/backward flick mapping. The footer text shows the current mapping (Clockwise → Next or Counterclockwise → Next).
+
 ---
 
 ## SwiftUI Issues
