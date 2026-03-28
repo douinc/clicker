@@ -30,6 +30,9 @@ class GestureManager: ObservableObject {
     @Published var gestureLockEnabled: Bool {
         didSet { UserDefaults.standard.set(gestureLockEnabled, forKey: "gestureLockEnabled") }
     }
+    @Published var noGoingBack: Bool {
+        didSet { UserDefaults.standard.set(noGoingBack, forKey: "gestureNoGoingBack") }
+    }
     @Published var isLocked: Bool = false
     @Published var lockProgress: CGFloat = 0.0
 
@@ -71,6 +74,7 @@ class GestureManager: ObservableObject {
         self.isInverted = UserDefaults.standard.bool(forKey: "gestureInverted")
         self.autoToggleWithWrist = UserDefaults.standard.bool(forKey: "gestureAutoToggle")
         self.gestureLockEnabled = UserDefaults.standard.bool(forKey: "gestureLockEnabled")
+        self.noGoingBack = UserDefaults.standard.bool(forKey: "gestureNoGoingBack")
         motionQueue.name = "com.dou.clicker.gesture"
         motionQueue.maxConcurrentOperationCount = 1
     }
@@ -132,14 +136,18 @@ class GestureManager: ObservableObject {
         guard abs(rotationX) > rotationThreshold else { return }
 
         let now = Date()
+        // Determine gesture direction before cooldown check so we can skip
+        // backward gestures without consuming the cooldown window.
+        let isInverted = self.isInverted
+        let gesture: DetectedGesture = (rotationX > 0) != isInverted ? .next : .previous
+
+        // Skip previous-slide gestures when "No Going Back" is enabled
+        if gesture == .previous && self.noGoingBack { return }
+
         let effectiveCooldown = gestureLockEnabled ? lockDuration : cooldownInterval
         guard now.timeIntervalSince(lastTriggerTime) >= effectiveCooldown else { return }
         lastTriggerTime = now
 
-        // Positive x rotation = wrist flick forward, Negative = backward
-        // When inverted: counterclockwise (negative) = next, clockwise (positive) = previous
-        let isInverted = self.isInverted
-        let gesture: DetectedGesture = (rotationX > 0) != isInverted ? .next : .previous
         let lockEnabled = self.gestureLockEnabled
 
         DispatchQueue.main.async { [weak self] in

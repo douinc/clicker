@@ -151,6 +151,8 @@ struct ContentView: View {
                 .animation(.linear(duration: 0.05), value: gestureManager.lockProgress)
             }
             .buttonStyle(.plain)
+            .disabled(gestureManager.noGoingBack)
+            .opacity(gestureManager.noGoingBack ? 0.3 : 1.0)
 
             // Timer + gesture toggle + settings row
             HStack(spacing: 4) {

@@ -35,6 +35,17 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle(isOn: $gestureManager.noGoingBack) {
+                        Text("No Going Back")
+                            .font(.system(size: 15))
+                    }
+                } footer: {
+                    Text("Disable previous slide gesture. Only forward flicks will be recognized.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Section {
                     Toggle(isOn: $gestureManager.isInverted) {
                         Text("Invert Gestures")
                             .font(.system(size: 15))
