@@ -3,9 +3,9 @@
 ## Project Overview
 
 This is a SwiftUI-based presentation remote system with three apps:
-- **Mac App** (`ClickerRemoteReceiver` v1.8): Menu bar app that receives commands and sends keystrokes to presentation software
-- **iPhone App** (`ClickerRemote` v1.8): Remote control with vertical slide navigation and presentation timer
-- **Apple Watch App** (`ClickerWatch` v1.8): Companion watch app with gesture-based slide control using double tap motion for next slide
+- **Mac App** (`ClickerRemoteReceiver` v1.10): Menu bar app that receives commands and sends keystrokes to presentation software
+- **iPhone App** (`ClickerRemote` v1.10): Remote control with vertical slide navigation and presentation timer
+- **Apple Watch App** (`ClickerWatch` v1.10): Companion watch app with gesture-based slide control using double tap motion for next slide
 
 ## Tech Stack
 
@@ -64,7 +64,7 @@ The notarized DMG is created at `./build/ClickerRemoteReceiver-{version}.dmg`.
 **Create GitHub release and update Homebrew tap:**
 ```bash
 # Create the release
-gh release create v1.8 ./build/ClickerRemoteReceiver-1.8.dmg --title 'Clicker v1.8' --notes 'Release notes'
+gh release create v1.10 ./build/ClickerRemoteReceiver-1.10.dmg --title 'Clicker v1.10' --notes 'Release notes'
 
 # Trigger homebrew-tap update (auto-calculates SHA256)
 just update-tap
