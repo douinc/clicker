@@ -1,10 +1,75 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var gestureManager: GestureManager
+    @AppStorage("gestureMode") private var gestureMode = "doubleTap"
     @AppStorage("invertCrown") private var invertCrown = false
 
     var body: some View {
         List {
+            Section {
+                Picker("Gesture Mode", selection: $gestureMode) {
+                    Label("Double Tap", systemImage: "hand.tap")
+                        .tag("doubleTap")
+                    Label("Wrist Flick", systemImage: "hand.wave")
+                        .tag("flickWrist")
+                }
+            } footer: {
+                Text(gestureMode == "doubleTap"
+                     ? "Double-tap gesture triggers next slide (watchOS 11+, Series 9+)."
+                     : "Flick your wrist to navigate slides hands-free.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+            }
+
+            if gestureMode == "flickWrist" {
+                Section {
+                    Toggle(isOn: $gestureManager.gestureLockEnabled) {
+                        Text("Gesture Lock")
+                            .font(.system(size: 15))
+                    }
+                } footer: {
+                    Text("After a gesture, lock out further gestures for 3 seconds to prevent accidental triggers.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Section {
+                    Toggle(isOn: $gestureManager.noGoingBack) {
+                        Text("No Going Back")
+                            .font(.system(size: 15))
+                    }
+                } footer: {
+                    Text("Disable previous slide gesture. Only forward flicks will be recognized.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Section {
+                    Toggle(isOn: $gestureManager.isInverted) {
+                        Text("Invert Gestures")
+                            .font(.system(size: 15))
+                    }
+                } footer: {
+                    Text(gestureManager.isInverted
+                         ? "Counterclockwise → Next\nClockwise → Previous"
+                         : "Clockwise → Next\nCounterclockwise → Previous")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Section {
+                    Toggle(isOn: $gestureManager.autoToggleWithWrist) {
+                        Text("Auto-toggle with Wrist")
+                            .font(.system(size: 15))
+                    }
+                } footer: {
+                    Text("Gestures enable on wrist raise and disable on wrist lower.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+            }
+
             Section {
                 Toggle(isOn: $invertCrown) {
                     Label("Invert Crown", systemImage: "digitalcrown.horizontal.arrow.counterclockwise")
@@ -17,19 +82,6 @@ struct SettingsView: View {
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
-
-            Section {
-                HStack {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.secondary)
-                    Text("Clicker Remote")
-                        .font(.system(size: 15))
-                }
-            } footer: {
-                Text("Use the large button, Digital Crown, or double-tap gesture (watchOS 11+) to advance slides.")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
         }
         .navigationTitle("Settings")
     }
@@ -38,5 +90,6 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
+            .environmentObject(GestureManager())
     }
 }

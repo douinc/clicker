@@ -142,6 +142,7 @@ Download **ClickerRemote** from the [App Store](https://apps.apple.com/us/app/cl
 | **Visual Progress** | Color-coded timer bar (green → yellow → orange → red) |
 | **Duration Presets** | 5, 10, 15, 20, 30 minutes or unlimited |
 | **Haptic Feedback** | Vibrate every 30s, 1m, 2m, or 5m |
+| **Wrist Flick Navigation** | Flick your wrist to navigate slides hands-free, with optional "No Going Back" mode for forward-only control |
 | **Double-Tap Gesture** | Hands-free next slide on Apple Watch Series 9+ / Ultra 2 (watchOS 11+) |
 | **Stays Active** | Extended runtime session keeps Watch app visible during presentations |
 

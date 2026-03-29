@@ -140,6 +140,9 @@ A widget in the watchOS Smart Stack showing timer and connection status at a gla
 ### Digital Crown Control 🟡
 Use the Digital Crown rotation to scroll through slides — rotate forward for next, backward for previous. Provides a tactile, precise alternative to wrist gestures or button taps. Configurable sensitivity and detent mapping.
 
+### ~~Forward-Only Flick Mode~~ ✅ Implemented
+~~Disable backward flick gestures so only forward flicks are recognized, reducing accidental triggers during presentations.~~ Shipped as the "No Going Back" toggle in Watch flick mode settings.
+
 ### Expanded Double-Tap Gestures 🟢
 Build on the existing watchOS 11 `handGestureShortcut` support. Map double-tap to configurable actions: next slide, previous slide, or start/stop timer. Let users choose what double-tap does in settings.
 

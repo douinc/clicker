@@ -47,7 +47,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-mac
         PRODUCT_NAME: ClickerRemoteReceiver
         MACOSX_DEPLOYMENT_TARGET: "14.0"
-        MARKETING_VERSION: "1.8"
+        MARKETING_VERSION: "1.10"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: MacApp/ClickerMac.entitlements
@@ -95,7 +95,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
         PRODUCT_NAME: ClickerRemote
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        MARKETING_VERSION: "1.8"
+        MARKETING_VERSION: "1.10"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -128,7 +128,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.LiveActivity
         PRODUCT_NAME: ClickerLiveActivity
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        MARKETING_VERSION: "1.8"
+        MARKETING_VERSION: "1.10"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
@@ -154,15 +154,18 @@ targets:
         WKCompanionAppBundleIdentifier: com.dou.clicker-ios
         WKBackgroundModes:
           - self-care
+        NSMotionUsageDescription: "Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
     entitlements:
       path: WatchApp/ClickerWatch.entitlements
       properties: {}
+    dependencies:
+      - sdk: CoreMotion.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios.watchkitapp
         PRODUCT_NAME: ClickerWatch
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
-        MARKETING_VERSION: "1.8"
+        MARKETING_VERSION: "1.10"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: HD35YQ72U4
