@@ -1,6 +1,6 @@
 cask("clicker-remote-receiver") do
   version("1.10")
-  sha256("c93cc1b685318f5fa61d7bfb8f7e5a7896c6400e22268b7097535b5bf8ab3dc3")
+  sha256("88763a4fb888c1f595b5862a38e19b12d5426f62b135e81c8b6f5607e8a257aa")
 
   url("https://github.com/douinc/clicker/releases/download/v#{version}/ClickerRemoteReceiver-#{version}.dmg")
   name("Clicker Remote Receiver")
