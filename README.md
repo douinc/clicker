@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="public/logo/ios-logo.png" alt="ClickerRemote" height="120">
+  <img src="public/logo/ios-logo.png" alt="Deck" height="120">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="public/logo/mac-logo.png" alt="ClickerRemoteReceiver" height="120">
 </p>
 
-<h1 align="center">ClickerRemote / ClickerRemoteReceiver</h1>
+<h1 align="center">Deck – Presentation Remote</h1>
 
 <p align="center">
   <strong>Control your presentations from your iPhone — no dongles, no BS.</strong>
@@ -29,7 +29,7 @@
     <td align="center">
       <img src="public/screenshot/ios/2-found-mac.png" alt="iPhone Found Mac" >
       <br><strong>2. Run on iPhone</strong>
-      <br><sub>Open ClickerRemote</sub>
+      <br><sub>Open Deck</sub>
     </td>
     <td align="center">
       <img src="public/screenshot/ios/6-timer-working.png" alt="Presenting" >
@@ -66,11 +66,11 @@
 
 ---
 
-## Why ClickerRemote?
+## Why Deck?
 
 Carrying a $30–$100 clicker alongside your $1000 iPhone and $2000 Mac seems excessive.
 
-ClickerRemote turns your iPhone into a wireless presentation remote. It works with **any app that uses arrow keys** — Keynote, PowerPoint, Google Slides, Figma, and more.
+Deck turns your iPhone into a wireless presentation remote. It works with **any app that uses arrow keys** — Keynote, PowerPoint, Google Slides, Figma, and more.
 - **No cloud servers** — Direct peer-to-peer connection
 - **No accounts** — Just install and go
 - **No internet needed** — Works completely offline
@@ -82,10 +82,10 @@ ClickerRemote turns your iPhone into a wireless presentation remote. It works wi
 ```mermaid
 graph LR
     subgraph Watch
-        W[ClickerWatch App]
+        W[Deck Watch]
     end
     subgraph iPhone
-        A[ClickerRemote App]
+        A[Deck iPhone]
     end
     subgraph Mac
         B[ClickerRemoteReceiver<br/>Menu Bar App]
@@ -121,7 +121,7 @@ Download from [GitHub Releases](https://github.com/douinc/clicker/releases), ope
 
 ### Step 2: Install iPhone App
 
-Download **ClickerRemote** from the [App Store](https://apps.apple.com/us/app/clickerremote/id6758130180)
+Download **Deck** from the [App Store](https://apps.apple.com/us/app/clickerremote/id6758130180)
 
 - 7-day free trial included
 - $19.99/year subscription
@@ -218,9 +218,9 @@ clicker/
 
 ```mermaid
 sequenceDiagram
-    participant Watch
-    participant iPhone
-    participant Mac
+    participant Watch as Deck Watch
+    participant iPhone as Deck iPhone
+    participant Mac as ClickerRemoteReceiver
     participant Keynote
 
     Mac->>Mac: Advertise via MultipeerConnectivity
