@@ -35,8 +35,8 @@ targets:
         NSBonjourServices:
           - _clickerremote._tcp
           - _clickerremote._udp
-        NSLocalNetworkUsageDescription: "Clicker needs local network access to connect with your iPhone for presentation control."
-        NSAppleEventsUsageDescription: "Clicker needs to send keystrokes to control your presentation software."
+        NSLocalNetworkUsageDescription: "Deck needs local network access to connect with your iPhone for presentation control."
+        NSAppleEventsUsageDescription: "Deck needs to send keystrokes to control your presentation software."
     entitlements:
       path: MacApp/ClickerMac.entitlements
       properties:
@@ -81,7 +81,7 @@ targets:
     info:
       path: iPhoneApp/Info.plist
       properties:
-        CFBundleName: ClickerRemote
+        CFBundleName: Deck
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -89,7 +89,7 @@ targets:
           - _clickerremote._tcp
           - _clickerremote._udp
         NSSupportsLiveActivities: true
-        NSLocalNetworkUsageDescription: "Clicker needs local network access to find and connect to your Mac."
+        NSLocalNetworkUsageDescription: "Deck needs local network access to find and connect to your Mac."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dou.clicker-ios
@@ -149,12 +149,12 @@ targets:
     info:
       path: WatchApp/Info.plist
       properties:
-        CFBundleName: ClickerWatch
+        CFBundleName: Deck
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.dou.clicker-ios
         WKBackgroundModes:
           - self-care
-        NSMotionUsageDescription: "Clicker uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
+        NSMotionUsageDescription: "Deck uses motion sensors to detect wrist gestures for hands-free slide control during presentations."
     entitlements:
       path: WatchApp/ClickerWatch.entitlements
       properties: {}
