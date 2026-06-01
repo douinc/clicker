@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ClickerRemote</string>
+	<string>Deck</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,7 +24,7 @@
 		<string>_clickerremote._udp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Clicker needs local network access to find and connect to your Mac.</string>
+	<string>Deck needs local network access to find and connect to your Mac.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UILaunchScreen</key>
