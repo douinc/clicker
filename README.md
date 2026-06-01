@@ -17,6 +17,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
 </p>
 
+> **Note:** Previously known as *ClickerRemote*. Renamed to *Deck* for better App Store discoverability.
+
 ---
 
 <table align="center">
