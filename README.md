@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> **This project has been rebranded to _Deck — Presentation Remote_.**
+> Active development has moved to **[douinc/deck](https://github.com/douinc/deck)** and **[deck.dou.so](https://deck.dou.so)**.
+> This repository is **publicly archived** and remains available for reference only. New features, fixes, and releases land in the new repo. Please update your bookmarks and follow [douinc/deck](https://github.com/douinc/deck).
+
+---
+
 <p align="center">
   <img src="public/logo/ios-logo.png" alt="ClickerRemote" height="120">
   &nbsp;&nbsp;&nbsp;&nbsp;

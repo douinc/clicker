@@ -1,3 +1,5 @@
+> **⚠️ Rebranded:** This project has moved to **[Deck](https://deck.dou.so)** — see [github.com/douinc/deck](https://github.com/douinc/deck). This repository is publicly archived.
+
 # ClickerRemote Developer Wiki
 
 Welcome to the ClickerRemote developer documentation. This wiki contains technical documentation for developers who want to build, modify, or contribute to the project.
@@ -77,14 +79,14 @@ clicker/
 
 | App | Distribution | Link |
 |-----|--------------|------|
-| ClickerRemoteReceiver | GitHub Releases (DMG) | [Releases](https://github.com/douinc/clicker/releases) |
+| ClickerRemoteReceiver | GitHub Releases (DMG) | [Releases](https://github.com/douinc/deck/releases) |
 | ClickerRemoteReceiver | Homebrew Cask | `brew tap douinc/tap && brew install --cask clicker-remote-receiver` |
 | ClickerRemote | App Store | [App Store](https://apps.apple.com/us/app/clickerremote/id6758130180) |
 | ClickerWatch | Bundled with iOS app | Installs automatically via Watch app |
 
 ## License
 
-MIT License — see [LICENSE](https://github.com/douinc/clicker/blob/main/LICENSE)
+MIT License — see [LICENSE](https://github.com/douinc/deck/blob/main/LICENSE)
 
 ---
 

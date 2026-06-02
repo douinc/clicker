@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ClickerRemote — Liquid Glass Presentation Remote</title>
-    <meta name="description" content="ClickerRemote turns your iPhone, Mac, and Apple Watch into a unified presentation remote with a liquid glass aesthetic and secure peer-to-peer control."/>
-    <meta property="og:title" content="ClickerRemote"/>
-    <meta property="og:description" content="SwiftUI-powered presentation remote for Mac, iPhone, and Apple Watch."/>
+    <title>ClickerRemote — Now Deck at deck.dou.so</title>
+    <meta name="description" content="ClickerRemote has been rebranded to Deck. Visit deck.dou.so for the latest version."/>
+    <meta property="og:title" content="ClickerRemote → Now Deck"/>
+    <meta property="og:description" content="ClickerRemote has been rebranded to Deck — Presentation Remote. Visit deck.dou.so and github.com/douinc/deck for the latest."/>
     <meta property="og:image" content="public/logo/ios-logo.png"/>
     <link rel="icon" type="image/png" href="public/logo/ios-logo.png"/>
     <style>
@@ -109,6 +109,32 @@
         .video-frame { position: relative; overflow: hidden; border-radius: 32px; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.02); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
         footer { margin: 90px 0 40px; text-align: center; color: var(--muted); }
         footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+        .rebrand-banner {
+            background: linear-gradient(120deg, rgba(255, 200, 50, 0.15), rgba(255, 140, 30, 0.15));
+            border: 1px solid rgba(255, 200, 50, 0.35);
+            border-radius: 18px;
+            padding: 18px 24px;
+            margin: 18px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .rebrand-banner .badge {
+            background: rgba(255, 190, 30, 0.25);
+            color: #ffd060;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 200, 50, 0.4);
+            white-space: nowrap;
+        }
+        .rebrand-banner p { margin: 0; color: rgba(246, 251, 255, 0.85); font-size: 0.95rem; }
+        .rebrand-banner a { color: #ffd060; font-weight: 600; text-decoration: none; }
+        .rebrand-banner a:hover { text-decoration: underline; }
         @media (max-width: 720px) {
             nav { flex-direction: column; gap: 16px; }
             .nav-links { flex-wrap: wrap; justify-content: center; }
@@ -118,6 +144,14 @@
 </head>
 <body>
     <main>
+        <div class="rebrand-banner">
+            <span class="badge">Rebranded</span>
+            <p>
+                <strong>ClickerRemote is now <a href="https://deck.dou.so" target="_blank" rel="noopener">Deck</a>.</strong>
+                Active development has moved to <a href="https://deck.dou.so" target="_blank" rel="noopener">deck.dou.so</a> and <a href="https://github.com/douinc/deck" target="_blank" rel="noopener">github.com/douinc/deck</a>.
+                This repository is publicly archived. Please update your bookmarks.
+            </p>
+        </div>
         <nav>
             <div class="brand">
                 <img src="public/logo/ios-logo.png" alt="ClickerRemote logo">
@@ -144,7 +178,7 @@
                 </p>
                 <div class="cta-group">
                     <a class="btn primary" href="https://apps.apple.com/us/app/clickerremote/id6758130180" target="_blank" rel="noopener">Install for iOS and Watch</a>
-                    <a class="btn secondary" href="https://github.com/douinc/clicker/releases" target="_blank" rel="noopener">Install for Mac</a>
+                    <a class="btn secondary" href="https://github.com/douinc/deck/releases" target="_blank" rel="noopener">Install for Mac</a>
                 </div>
                 <div class="metrics">
                     <div class="metric"><strong>Mac 1.10</strong><span>ClickerRemoteReceiver</span></div>
@@ -263,7 +297,7 @@
                 <p>Get the Mac receiver up and running in seconds with Homebrew. No manual downloads or drag-and-drop required.</p>
             </div>
             <div style="background: rgba(9, 15, 28, 0.65); border-radius: 20px; border: 1px solid var(--border); padding: 28px; font-family: 'SF Mono', SFMono-Regular, Menlo, monospace; font-size: 0.95rem; line-height: 2; color: var(--muted); overflow-x: auto;">
-                <div><span style="color: rgba(255,255,255,0.35);">$</span> <span style="color: var(--text);">brew tap douinc/clicker https://github.com/douinc/clicker</span></div>
+                <div><span style="color: rgba(255,255,255,0.35);">$</span> <span style="color: var(--text);">brew tap douinc/tap</span></div>
                 <div><span style="color: rgba(255,255,255,0.35);">$</span> <span style="color: var(--text);">brew install --cask clicker-remote-receiver</span></div>
             </div>
         </section>
@@ -310,8 +344,8 @@
                 <p>Everything—Swift code, wiki docs, and distribution scripts—lives on GitHub. File issues, follow TestFlight betas, or dive into the wiki if you want to extend Clicker to your stage setup.</p>
             </div>
             <div class="cta-group">
-                <a class="btn primary" href="https://github.com/douinc/clicker" target="_blank" rel="noopener">Explore the repository</a>
-                <a class="btn secondary" href="https://github.com/douinc/clicker/wiki" target="_blank" rel="noopener">Read the wiki</a>
+                <a class="btn primary" href="https://github.com/douinc/deck" target="_blank" rel="noopener">Explore the new repository</a>
+                <a class="btn secondary" href="https://github.com/douinc/deck/wiki" target="_blank" rel="noopener">Read the wiki</a>
             </div>
         </section>
 
@@ -319,7 +353,7 @@
             <p>
                 <a href="PRIVACY_POLICY.html">Privacy Policy</a>
                 <a href="TERMS_OF_SERVICE.html">Terms of Service</a>
-                <a href="https://github.com/douinc/clicker/issues" target="_blank" rel="noopener">Support</a>
+                <a href="https://github.com/douinc/deck/issues" target="_blank" rel="noopener">Support</a>
             </p>
             <p>© 2026 DOU Inc. Distributed under the MIT License.</p>
         </footer>

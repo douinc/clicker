@@ -1,3 +1,5 @@
+> **⚠️ Rebranded:** Active development has moved to [github.com/douinc/deck](https://github.com/douinc/deck). This repository is publicly archived.
+
 # Getting Started
 
 This guide covers setting up your development environment to build ClickerRemote from source.
@@ -15,8 +17,8 @@ This guide covers setting up your development environment to build ClickerRemote
 
 ```bash
 # Clone the repository
-git clone https://github.com/douinc/clicker.git
-cd clicker
+git clone https://github.com/douinc/deck.git
+cd deck
 
 # Generate Xcode project
 xcodegen generate

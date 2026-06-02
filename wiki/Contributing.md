@@ -1,3 +1,5 @@
+> **⚠️ Rebranded:** Contributions should go to [github.com/douinc/deck](https://github.com/douinc/deck). This repository is publicly archived.
+
 # Contributing
 
 Thank you for your interest in contributing to ClickerRemote!
@@ -7,8 +9,8 @@ Thank you for your interest in contributing to ClickerRemote!
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/clicker.git
-   cd clicker
+   git clone https://github.com/YOUR_USERNAME/deck.git
+   cd deck
    ```
 3. Set up the development environment (see [[Getting-Started]])
 
@@ -141,12 +143,12 @@ xcodegen generate
 
 ### Known Issues
 
-Check [GitHub Issues](https://github.com/douinc/clicker/issues) for open bugs.
+Check [GitHub Issues](https://github.com/douinc/deck/issues) for open bugs.
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/douinc/clicker/discussions)
-- File an [Issue](https://github.com/douinc/clicker/issues)
+- Open a [Discussion](https://github.com/douinc/deck/discussions)
+- File an [Issue](https://github.com/douinc/deck/issues)
 
 ## License
 
